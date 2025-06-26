@@ -130,37 +130,7 @@ interface ThreadsState {
 - `resetStore()` - Reset to initial state
 
 ### Usage Example
-```typescript
-import { useThreadsStore } from './src/store/threadsStore';
-
-const MyComponent = () => {
-  const { 
-    boards, 
-    loading, 
-    error, 
-    fetchThreads, 
-    renameThread 
-  } = useThreadsStore();
-
-  const handleFetchThreads = async () => {
-    await fetchThreads();
-    console.log('Boards:', boards);
-  };
-
-  const handleRenameThread = async (boardId: string, newData: any) => {
-    await renameThread(boardId, newData);
-  };
-
-  return (
-    <View>
-      <TouchableOpacity onPress={handleFetchThreads}>
-        <Text>Fetch Threads</Text>
-      </TouchableOpacity>
-      {/* UI components */}
-    </View>
-  );
-};
-```
+#### See App.tsx file
 
 ## 🔌 WebSocket Service
 
@@ -188,12 +158,6 @@ socketService.on('connectionStateChange', (data) => {
 // Disconnect
 socketService.disconnect();
 ```
-
-## 📚 API Endpoints
-
-### Threads/Boards
-- **GET** `/api/1.1/kora/boards?type=history&limit=50` - Fetch threads
-- **PUT** `/api/1.1/ka/boards/{boardId}` - Rename thread
 
 ## 🚀 Getting Started
 
@@ -260,18 +224,6 @@ The SDK includes comprehensive error handling:
 - ✅ iOS
 - ✅ Android
 - ⚡ React Native 0.77.0+
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes with proper TypeScript types
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-Private - AIforWork Internal SDK
 
 ## 🔗 Related
 
