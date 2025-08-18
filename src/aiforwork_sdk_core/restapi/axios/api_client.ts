@@ -1,5 +1,6 @@
+import { getSDKConfig } from '../../sdk.config';
 import AxiosBase from './axios_base';
-import { getSDKConfig } from '../../sdk/sdk.config';
+
 
 interface ApiResponse<T> {
   data: T;

@@ -2,7 +2,7 @@ import { EventEmitter } from "eventemitter3";
 import io, { Socket } from "socket.io-client";
 import ApiClient from "../restapi/axios/api_client";
 import { EMITTER_TYPES, entities } from "../utils/utils";
-import { getSDKConfig, isSDKInitialized } from "../sdk/sdk.config";
+import { getSDKConfig, isSDKInitialized } from "../sdk.config";
 
 // Type Definitions
 interface SocketParams {

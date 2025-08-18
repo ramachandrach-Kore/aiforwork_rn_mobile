@@ -8,9 +8,11 @@ import {
   StyleSheet,
   StatusBar,
 } from 'react-native';
-import { initializeSDK } from './src/sdk/sdk.config';
-import socketService from './src/socket/socket.service';
-import { useThreadsStore } from './src/store/threadsStore';
+import { initializeSDK } from './src/aiforwork_sdk_core/sdk.config';
+import socketService from './src/aiforwork_sdk_core/socket/socket.service';
+import { useThreadsStore } from './src/aiforwork_sdk_core/store/threadsStore';
+import BotChat from './src/aiforwork_sdk_ui/chat/BotChat';
+
 
 // Simple component for fetching threads
 const FetchThreadsButton: React.FC = () => {
@@ -89,10 +91,10 @@ class App extends React.Component<AppProps, AppState> {
   componentDidMount() {
     // Initialize SDK with your configuration
     initializeSDK({
-      accessToken: 'ymY83oqZ2DySQM0AnhYtoLtLY180QgeKe1G1Wj8VKtkbj9yTahsHPoXuqmdY2kGO',
+      accessToken: '1x3MzryJ_XTNhL9VMYVRFYxYBDuIIYfoGAk1PETMGYHcmVKrQeif34oJwpSzxV_c',
       apiUrl: 'https://work-qa.kore.ai/',
       presenceUrl: 'https://work-qa.kore.ai/',
-      userId: 'u-19fc75dd-6c58-5033-b7b7-128b2c0c522a'
+      userId: 'u-0f5bdefb-ae94-5d4b-a63a-fe9bc9755bb2'
     });
 
     this.setupSocketListeners();
@@ -184,62 +186,67 @@ class App extends React.Component<AppProps, AppState> {
       this.updateConnectionStatus('Disconnected', '#dc3545'); // Red
     }, 500);
   };
+ renderButtons=()=>{
+  return(
+    <View style={styles.contentContainer}>
+    <Text style={styles.titleText}>
+      {'Kore.ai Inc, Socket Service Module'}
+    </Text>
 
+    {/* Text Input */}
+    <TextInput
+      style={styles.textInputStyle1}
+      autoFocus={true}
+      onChangeText={newText => this.setState({ text: newText })}
+      value={this.state.text}
+      placeholderTextColor="#98A2B3"
+      placeholder={'Enter your message'}
+    />
+    
+    {/* Connection Status Display */}
+    <View
+      style={[
+        styles.statusContainer,
+        { backgroundColor: this.state.connectionColor }
+      ]}>
+      <Text style={styles.statusText}>
+        Status: {this.state.connectionStatus}
+      </Text>
+    </View>
+
+    {/* Control Buttons */}
+    <View style={styles.buttonContainer}>
+      <TouchableOpacity
+        onPress={this.onConnect}
+        style={[styles.button, styles.connectButton]}>
+        <Text style={styles.buttonText}>
+          {'Connect'}
+        </Text>
+      </TouchableOpacity>
+      
+      <TouchableOpacity
+        onPress={this.onDisconnect}
+        style={[styles.button, styles.disconnectButton]}>
+        <Text style={styles.buttonText}>
+          {'Disconnect'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+
+    {/* Fetch Threads Button */}
+    <FetchThreadsButton />
+
+    {/* Rename Thread Button */}
+    <RenameThreadButton />
+  </View>
+  )
+}
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.titleText}>
-            {'Kore.ai Inc, Socket Service Module'}
-          </Text>
-
-          {/* Text Input */}
-          <TextInput
-            style={styles.textInputStyle1}
-            autoFocus={true}
-            onChangeText={newText => this.setState({ text: newText })}
-            value={this.state.text}
-            placeholderTextColor="#98A2B3"
-            placeholder={'Enter your message'}
-          />
-          
-          {/* Connection Status Display */}
-          <View
-            style={[
-              styles.statusContainer,
-              { backgroundColor: this.state.connectionColor }
-            ]}>
-            <Text style={styles.statusText}>
-              Status: {this.state.connectionStatus}
-            </Text>
-          </View>
-
-          {/* Control Buttons */}
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              onPress={this.onConnect}
-              style={[styles.button, styles.connectButton]}>
-              <Text style={styles.buttonText}>
-                {'Connect'}
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              onPress={this.onDisconnect}
-              style={[styles.button, styles.disconnectButton]}>
-              <Text style={styles.buttonText}>
-                {'Disconnect'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Fetch Threads Button */}
-          <FetchThreadsButton />
-
-          {/* Rename Thread Button */}
-          <RenameThreadButton />
-        </View>
+       
         <StatusBar barStyle="default" />
+        <BotChat/>
       </SafeAreaView>
     );
   }
@@ -250,7 +257,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
-    alignItems: 'center',
+   
   },
   contentContainer: {
     justifyContent: 'center',

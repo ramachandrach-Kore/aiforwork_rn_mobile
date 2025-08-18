@@ -1,0 +1,107 @@
+import { nanoid } from "nanoid";
+import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
+import { MessageState } from "../utils/MessageStates";
+import {
+  createMessageMiddleware,
+  MessageMiddleware,
+} from "./middleware/messageMiddleware";
+import {
+  createApiMessageMiddleware,
+  ApiMessageMiddleware,
+} from "./middleware/apiMessageMiddleware";
+import "react-native-get-random-values";
+
+export interface MessagesState {
+  messages: any[];
+  loading: boolean;
+  moreAvailable: boolean;
+  currentBoard: any;
+  recentMessage: any;
+}
+
+export interface MessagesActions {
+  fetchMessages: () => Promise<void>;
+  sendMessage: (messageObject: any) => Promise<void>;
+  resetStore: () => void;
+}
+
+export type MessagesStore = MessagesState & MessagesActions;
+
+const initialState: MessagesState = {
+  messages: [],
+  loading: false,
+  moreAvailable: false,
+  currentBoard: null,
+  recentMessage: null,
+};
+
+// Create separate middleware instances
+const messageMiddleware: MessageMiddleware = createMessageMiddleware();
+const apiMiddleware: ApiMessageMiddleware = createApiMessageMiddleware();
+
+export const useMessagesStore = create<MessagesStore>()(
+  immer((set, get) => ({
+    ...initialState,
+    fetchMessages: async () => {
+      // Placeholder implementation
+      console.log("fetchMessages called");
+    },
+    sendMessage: async (messageObject: any) => {
+     
+      const message = messageMiddleware.createMessage(messageObject);
+      try {
+        // Add message to state with SENDING state
+        set((state) => {
+          state.messages.push(message);
+          state.recentMessage = message;
+        });
+
+        // Use API middleware to send message
+        const response = await apiMiddleware.sendMessageToAPI(message);
+       
+
+        // Update message state to SENT on success
+        set((state) => {
+          const messageIndex = state.messages.findIndex(
+            (m) => m.reqId === message.reqId
+          );
+          if (messageIndex !== -1) {
+            state.messages[messageIndex].messageState = MessageState.SENT;
+            state.messages[messageIndex] = {...state.messages[messageIndex] ,...response}; // Store response data
+           
+            state.recentMessage = state.messages[messageIndex];
+          }
+        });
+      } catch (error) {
+        console.log("=====error======>", error);
+
+        // Use API middleware to handle error
+        const lastMessage = get().messages[get().messages.length - 1];
+        if (lastMessage) {
+          // Update message state to FAILED and store error info
+          set((state) => {
+            const messageIndex = state.messages.findIndex(
+              (m) =>  m?.reqId === message?.reqId
+            );
+            if (messageIndex !== -1) {
+              state.messages[messageIndex].messageState = MessageState.FAILED;
+              state.messages[messageIndex].error = {...state.messages[messageIndex],
+                message: (error as Error).message || "Unknown error",
+                timestamp: Date.now(),
+                retryCount: 0,
+              };
+              state.recentMessage = state.messages[messageIndex];
+            }
+          });
+        }
+      }
+    },
+
+    resetStore: () => {
+      set((state) => {
+        Object.assign(state, initialState);
+      });
+    },
+  }))
+);
