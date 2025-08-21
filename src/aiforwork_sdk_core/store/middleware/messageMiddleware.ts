@@ -17,7 +17,7 @@ export class MessageMiddlewareImpl implements MessageMiddleware {
       reqId: id,
       messageState: MessageState.SENDING,
       timestamp: Date.now(),
-      id: id // Add unique ID for tracking
+      clientId: id // Add unique ID for tracking
     }
     if(messageObject.boardId){
       messagePayload.boardId=messageObject.boardId;

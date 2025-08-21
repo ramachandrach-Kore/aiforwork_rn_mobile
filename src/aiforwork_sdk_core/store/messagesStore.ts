@@ -11,6 +11,7 @@ import {
   ApiMessageMiddleware,
 } from "./middleware/apiMessageMiddleware";
 import "react-native-get-random-values";
+import socketService from "../socket/socket.service";
 
 export interface MessagesState {
   messages: any[];
@@ -24,6 +25,7 @@ export interface MessagesActions {
   fetchMessages: () => Promise<void>;
   sendMessage: (messageObject: any) => Promise<void>;
   resetStore: () => void;
+  listenSocket: () => void;
 }
 
 export type MessagesStore = MessagesState & MessagesActions;
@@ -48,18 +50,17 @@ export const useMessagesStore = create<MessagesStore>()(
       console.log("fetchMessages called");
     },
     sendMessage: async (messageObject: any) => {
-     
       const message = messageMiddleware.createMessage(messageObject);
       try {
         // Add message to state with SENDING state
         set((state) => {
-          state.messages.push(message);
+          //state.messages.push(message);
+          state.messages = [message, ...state.messages];
           state.recentMessage = message;
         });
 
         // Use API middleware to send message
         const response = await apiMiddleware.sendMessageToAPI(message);
-       
 
         // Update message state to SENT on success
         set((state) => {
@@ -68,39 +69,97 @@ export const useMessagesStore = create<MessagesStore>()(
           );
           if (messageIndex !== -1) {
             state.messages[messageIndex].messageState = MessageState.SENT;
-            state.messages[messageIndex] = {...state.messages[messageIndex] ,...response}; // Store response data
-           
+            state.messages[messageIndex] = {
+              ...state.messages[messageIndex],
+              ...response,
+            }; // Store response data
             state.recentMessage = state.messages[messageIndex];
           }
         });
       } catch (error) {
         console.log("=====error======>", error);
 
-        // Use API middleware to handle error
-        const lastMessage = get().messages[get().messages.length - 1];
-        if (lastMessage) {
-          // Update message state to FAILED and store error info
-          set((state) => {
-            const messageIndex = state.messages.findIndex(
-              (m) =>  m?.reqId === message?.reqId
-            );
-            if (messageIndex !== -1) {
-              state.messages[messageIndex].messageState = MessageState.FAILED;
-              state.messages[messageIndex].error = {...state.messages[messageIndex],
-                message: (error as Error).message || "Unknown error",
-                timestamp: Date.now(),
-                retryCount: 0,
-              };
-              state.recentMessage = state.messages[messageIndex];
-            }
-          });
-        }
+        set((state) => {
+          const messageIndex = state.messages.findIndex(
+            (m) => m?.reqId === message?.reqId
+          );
+          if (messageIndex !== -1) {
+            state.messages[messageIndex].messageState = MessageState.FAILED;
+            state.messages[messageIndex].error = {
+              ...state.messages[messageIndex],
+              message: (error as Error).message || "Unknown error",
+              timestamp: Date.now(),
+              retryCount: 0,
+            };
+            //state.recentMessage = state.messages[messageIndex];
+          }
+        });
       }
     },
 
     resetStore: () => {
       set((state) => {
         Object.assign(state, initialState);
+      });
+    },
+    listenSocket: () => {
+      console.log("listenSocket called ");
+      socketService.on("answersuggestion", (message: any) => {
+        console.log("answersuggestion:", message);
+      });
+
+      socketService.on("reqFlow", (message: any) => {
+        if (
+          message?.data?.reqId === get().recentMessage?.reqId ||
+          message?.data?.msgId === get().recentMessage?.messageId
+        ) {
+          console.log("reqFlow: matched:-->", message);
+
+          // Find the message by msgId or reqId
+          const messageIndex = get().messages?.findIndex(
+            (msg) =>
+              msg?.messageId === message?.data?.msgId ||
+              msg?.reqId === message?.data?.reqId
+          );
+
+          if (messageIndex !== -1) {
+            
+            set((state) => {
+              let suggestion = {
+                icon: message?.data?.suggestion?.icon,
+                content: message?.data?.suggestion,
+              };
+              state.messages[messageIndex]['reqFlow'] = [suggestion];
+            });
+          }
+        }
+      });
+
+      socketService.on("answerChunk", (message: any) => {
+        //console.log("answerChunk:", message);
+
+        if (
+          message?.data?.reqId === get().recentMessage?.reqId ||
+          message?.data?.msgId === get().recentMessage?.messageId
+        ) {
+          console.log("reqFlow: matched:-->", message);
+
+          // Find the message by msgId or reqId
+          const messageIndex = get().messages?.findIndex(
+            (msg) =>
+              msg?.messageId === message?.data?.msgId ||
+              msg?.reqId === message?.data?.reqId
+          );
+
+          if (messageIndex !== -1) {
+            
+            set((state) => {   
+              state.messages[messageIndex]['answer'] = (state.messages[messageIndex]['answer']||'')+ message?.data?.chunk;
+            });
+          }
+        }
+
+
       });
     },
   }))

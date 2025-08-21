@@ -81,6 +81,8 @@ enum CustomEvents {
 }
 
 class WebsocketService extends EventEmitter {
+    private static instance: WebsocketService | null = null;
+    
     private _interval: NodeJS.Timeout | null = null;
     private monitorInterval: NodeJS.Timeout | null = null;
     private presence: string = '';
@@ -106,6 +108,20 @@ class WebsocketService extends EventEmitter {
         lastMessageTime: null
     };
 
+    // Private constructor to prevent direct instantiation
+    private constructor() {
+        super();
+    }
+
+    // Static method to get the singleton instance
+    public static getInstance(): WebsocketService {
+        if (!WebsocketService.instance) {
+            console.log('==========Creating new instance of WebsocketService=====');
+            WebsocketService.instance = new WebsocketService();
+        }
+        return WebsocketService.instance;
+    }
+
     // Connection Management
     createSocketConnection = (userId: string, sToken: string): Socket | undefined => {
 
@@ -126,7 +142,7 @@ class WebsocketService extends EventEmitter {
             reconnection: false,
             timeout: 15000,
             reconnectionDelay: 3000,
-            reconnectionAttempts: 'Infinity',
+            reconnectionAttempts: this.maxReconnectAttempts,
             query: this.buildQueryString(userId, sToken),
         };
 
@@ -220,10 +236,21 @@ class WebsocketService extends EventEmitter {
             switch (msg?.entity) {
                 case 'answersuggestion':
                     //TODO: handle answer suggestion
+                    this.emit(msg?.entity,msg);
+                    //console.log('answersuggestion', msg);
                     break;
                 case 'answerChunk':
-                    //TODO: handle answer chunk
+                    //TODO: handle answer chunk 
+                    //console.log('answerChunk', msg);
+                  
+                    this.emit(msg?.entity,msg);
                     break;
+
+                    case 'reqFlow':
+                        //TODO: handle reqFlow
+                        this.emit(msg?.entity,msg);
+                       // console.log('reqFlow', msg);
+                        break;    
             }
         }
     };
@@ -425,7 +452,7 @@ class WebsocketService extends EventEmitter {
         this.isConnecting = true;
         const axios = ApiClient.getInstance();
         axios.post<PresenceResponse>('api/1.1/presence/start')
-            .then(response => {
+            .then((response: any) => {
                 if (response.data) {
                     console.log('Presence Response', response.data, this.userId);
                     this.createSocketConnection(
@@ -435,7 +462,7 @@ class WebsocketService extends EventEmitter {
                 }
                 this.isConnecting = false;
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.log('ERROR ---->', error);
                 this.isConnecting = false;
                 this.scheduleReconnection();
@@ -451,4 +478,4 @@ class WebsocketService extends EventEmitter {
     };
 }
 
-export default new WebsocketService(); 
+export default WebsocketService.getInstance(); 

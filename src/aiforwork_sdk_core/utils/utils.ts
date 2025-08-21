@@ -1,6 +1,6 @@
 import { Platform } from "react-native";
 
-export const entities = ['answersuggestion', 'answerChunk'];
+export const entities = ['answersuggestion', 'answerChunk','reqFlow'];
 export const EMITTER_TYPES = {
     LIVE_STREAMING: 'liveStreaming',
   };

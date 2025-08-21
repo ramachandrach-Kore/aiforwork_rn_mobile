@@ -1,21 +1,18 @@
 import React from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import MarkDownComponent from "./MarkDownComponent";
-import {
-  hasMarkdown,
-  isAndroid,
-} from "../../../aiforwork_sdk_core/utils/utils";
+import { hasMarkdown, isAndroid } from "../../aiforwork_sdk_core/utils/utils";
 import { markdownStyles } from "./MarkDownStyles";
 const AnswerBubbleComponent = ({ item }: any) => {
-  console.log("==item===>", item?.item);
   if (item?.citationAnswers?.length > 0) {
     return (
       <View style={markdownStyles.citationContainer}>
-        {item?.citationAnswers?.map((citiation: any) => {
+        {item?.citationAnswers?.map((citiation: any, index: number) => {
           let isMarkDown = hasMarkdown(citiation?.answer);
           if (isMarkDown) {
             return (
               <MarkDownComponent
+                key={index + citiation?.answer?.[0]}
                 answer={citiation?.answer}
                 styles={undefined}
               />
@@ -28,6 +25,7 @@ const AnswerBubbleComponent = ({ item }: any) => {
 
               {citiation?.sources?.map((source: any, index: number) => (
                 <TouchableOpacity
+                  key={source?.position}
                   style={markdownStyles.badge}
                   onPress={() => {
                     // if (this.props.citationClicked) {
@@ -35,7 +33,7 @@ const AnswerBubbleComponent = ({ item }: any) => {
                     // }
                   }}
                 >
-                  <View style={markdownStyles.badgeBase}>
+                  <View style={markdownStyles.badgeBase} key={source?.position}>
                     <Text style={markdownStyles.text1}>{source?.position}</Text>
                   </View>
                 </TouchableOpacity>

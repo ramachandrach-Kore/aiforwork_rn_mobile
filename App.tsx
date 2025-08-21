@@ -11,7 +11,7 @@ import {
 import { initializeSDK } from './src/aiforwork_sdk_core/sdk.config';
 import socketService from './src/aiforwork_sdk_core/socket/socket.service';
 import { useThreadsStore } from './src/aiforwork_sdk_core/store/threadsStore';
-import BotChat from './src/aiforwork_sdk_ui/chat/BotChat';
+import BotChat from './src/aiforwork_sdk_ui/sdk_main/BotChat';
 
 
 // Simple component for fetching threads
@@ -70,7 +70,9 @@ const RenameThreadButton: React.FC = () => {
   );
 };
 
-interface AppProps {}
+interface AppProps {
+  navigation?: any; // Add navigation property
+}
 
 interface AppState {
   connectionStatus: string;
@@ -91,13 +93,14 @@ class App extends React.Component<AppProps, AppState> {
   componentDidMount() {
     // Initialize SDK with your configuration
     initializeSDK({
-      accessToken: '1x3MzryJ_XTNhL9VMYVRFYxYBDuIIYfoGAk1PETMGYHcmVKrQeif34oJwpSzxV_c',
+      accessToken: '5W6Qh-kTfIGUOzhaw6FacUw8Fjkx4boy9gkLQliS9XRUw3PJYh_rapSmdgzL39_C',
       apiUrl: 'https://work-qa.kore.ai/',
       presenceUrl: 'https://work-qa.kore.ai/',
       userId: 'u-0f5bdefb-ae94-5d4b-a63a-fe9bc9755bb2'
     });
 
     this.setupSocketListeners();
+    this.onConnect();
   }
 
   componentWillUnmount() {
@@ -244,9 +247,9 @@ class App extends React.Component<AppProps, AppState> {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-       
+      
         <StatusBar barStyle="default" />
-        <BotChat/>
+        <BotChat navigation={this.props.navigation}/>
       </SafeAreaView>
     );
   }
