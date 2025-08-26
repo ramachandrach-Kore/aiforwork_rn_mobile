@@ -1,6 +1,11 @@
+import { AllTemplates } from "../sdk_templates/AllTemplatesConst";
+import ResolveAmbiguityModal from "../sdk_templates/ResolveAmbiguityModal";
+
 // Template Navigation Handler - Handles navigation logic for different template types
 export class TemplateNavigationHandler {
   private navigation: any;
+  private isResolveAmbiguityModalVisible: boolean = false;
+  private resolveAmbiguityData: any = null;
 
   constructor(navigation: any) {
     this.navigation = navigation;
@@ -24,14 +29,45 @@ export class TemplateNavigationHandler {
         this.navigateToJiraTable();
         break;
 
-      case "form_builder":
-        this.navigateToFormBuilder();
+      case AllTemplates.RESOLVE_AMBIGUITY:
+        this.openResolveAmbiguityModal(message);
         break;
 
       default:
         console.log("Unknown template type:", templateType);
         break;
     }
+  }
+
+  // Open Resolve Ambiguity Modal
+  private openResolveAmbiguityModal(message: any): void {
+    this.resolveAmbiguityData = message;
+    this.isResolveAmbiguityModalVisible = true;
+    // Trigger re-render or modal display logic here
+    // This might need to be handled by the parent component that uses this handler
+  }
+
+  // Close Resolve Ambiguity Modal
+  public closeResolveAmbiguityModal(): void {
+    this.isResolveAmbiguityModalVisible = false;
+    this.resolveAmbiguityData = null;
+  }
+
+  // Get modal visibility state
+  public getResolveAmbiguityModalVisible(): boolean {
+    return this.isResolveAmbiguityModalVisible;
+  }
+
+  // Get modal data
+  public getResolveAmbiguityData(): any {
+    return this.resolveAmbiguityData;
+  }
+
+  // Handle modal confirmation
+  public handleResolveAmbiguityConfirm(payload: any): void {
+    console.log("Resolve ambiguity confirmed:", payload);
+    this.closeResolveAmbiguityModal();
+    // TODO: Implement ambiguity resolution logic
   }
 
   // Navigation methods for each template type

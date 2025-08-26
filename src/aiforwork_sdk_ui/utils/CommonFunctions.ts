@@ -1,4 +1,4 @@
-import { Dimensions, Platform, PixelRatio } from "react-native";
+import { Dimensions, Platform, PixelRatio, Linking } from "react-native";
 export const isIOS = Platform.OS === "ios";
 export const isAndroid = Platform.OS === "android";
 
@@ -17,3 +17,45 @@ export function normalize(size: number) {
     return Math.ceil(PixelRatio.roundToNearestPixel(newSize));
   }
 }
+
+export const openMessage = (messageId: string, redirectUrl: any) => {
+  let mobUrl = redirectUrl?.mob || redirectUrl?.dweb;
+  console.log(messageId, "mobUrl", mobUrl);
+  switch (Platform.OS) {
+    case "ios": {
+      if (messageId?.length > 0) {
+        const messageUrl = "message://" + messageId;
+
+        Linking.canOpenURL(messageUrl).then((supported) => {
+          if (supported) {
+            console.log(messageUrl, "openURL");
+          } else {
+            redirect(mobUrl);
+          }
+        });
+      } else if (mobUrl?.length > 0) {
+        redirect(mobUrl);
+      }
+      break;
+    }
+    case "android": {
+      if (mobUrl?.length > 0) {
+        redirect(mobUrl);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+};
+export const redirect = (url: string) => {
+  Linking.canOpenURL(url).then((supported) => {
+    if (supported) {
+      Linking.openURL(url);
+    } else {
+      try {
+        Linking.openURL(url);
+      } catch (e) {}
+    }
+  });
+};

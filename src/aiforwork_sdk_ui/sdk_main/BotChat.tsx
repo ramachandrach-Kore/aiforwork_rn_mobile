@@ -78,8 +78,8 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
 
   // Optimized render item function
   const renderItem = useCallback(
-    ({ item }: { item: any }) => (
-      <ListItem item={item} onPress={handleItemPress} />
+    ({ item, index }: { item: any, index: number }) => (
+      <ListItem item={item} onPress={handleItemPress} index={index} isLastItem={index === 0} />
     ),
     []
   );

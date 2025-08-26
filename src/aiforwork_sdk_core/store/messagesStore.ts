@@ -50,13 +50,34 @@ export const useMessagesStore = create<MessagesStore>()(
       console.log("fetchMessages called");
     },
     sendMessage: async (messageObject: any) => {
-      const message = messageMiddleware.createMessage(messageObject);
+      let message = undefined;
+      if (messageObject?.messageId) {
+        message = messageObject;
+        message.messageState = MessageState.SENDING;
+        //message = messageMiddleware.createMessage(messageObject);
+      } else {
+        message = messageMiddleware.createMessage(messageObject);
+      }
       try {
         // Add message to state with SENDING state
         set((state) => {
           //state.messages.push(message);
-          state.messages = [message, ...state.messages];
-          state.recentMessage = message;
+          if (message?.messageId) {
+            const messageIndex = state.messages.findIndex(
+              (m) =>
+                m.reqId === message.reqId ||
+                (message.messageId && m.messageId === message.messageId)
+            );
+            if (messageIndex !== -1) {
+              state.messages[messageIndex] = message;
+            } else {
+              state.messages = [...state.messages, message];
+              state.recentMessage = message;
+            }
+          } else {
+            state.messages = [message, ...state.messages];
+            state.recentMessage = message;
+          }
         });
 
         // Use API middleware to send message
@@ -65,7 +86,9 @@ export const useMessagesStore = create<MessagesStore>()(
         // Update message state to SENT on success
         set((state) => {
           const messageIndex = state.messages.findIndex(
-            (m) => m.reqId === message.reqId
+            (m) =>
+              m.reqId === message.reqId ||
+              (message.messageId && m.messageId === message.messageId)
           );
           if (messageIndex !== -1) {
             state.messages[messageIndex].messageState = MessageState.SENT;
@@ -85,13 +108,14 @@ export const useMessagesStore = create<MessagesStore>()(
           );
           if (messageIndex !== -1) {
             state.messages[messageIndex].messageState = MessageState.FAILED;
+            state.messages[messageIndex]['status'] = "terminated"
             state.messages[messageIndex].error = {
               ...state.messages[messageIndex],
               message: (error as Error).message || "Unknown error",
               timestamp: Date.now(),
               retryCount: 0,
             };
-            //state.recentMessage = state.messages[messageIndex];
+            state.recentMessage = state.messages[messageIndex];
           }
         });
       }
@@ -123,13 +147,12 @@ export const useMessagesStore = create<MessagesStore>()(
           );
 
           if (messageIndex !== -1) {
-            
             set((state) => {
               let suggestion = {
                 icon: message?.data?.suggestion?.icon,
                 content: message?.data?.suggestion,
               };
-              state.messages[messageIndex]['reqFlow'] = [suggestion];
+              state.messages[messageIndex]["reqFlow"] = [suggestion];
             });
           }
         }
@@ -152,14 +175,13 @@ export const useMessagesStore = create<MessagesStore>()(
           );
 
           if (messageIndex !== -1) {
-            
-            set((state) => {   
-              state.messages[messageIndex]['answer'] = (state.messages[messageIndex]['answer']||'')+ message?.data?.chunk;
+            set((state) => {
+              state.messages[messageIndex]["answer"] =
+                (state.messages[messageIndex]["answer"] || "") +
+                message?.data?.chunk;
             });
           }
         }
-
-
       });
     },
   }))

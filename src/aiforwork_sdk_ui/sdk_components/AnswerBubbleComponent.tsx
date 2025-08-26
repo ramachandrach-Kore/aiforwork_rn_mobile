@@ -1,6 +1,7 @@
 import React from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import MarkDownComponent from "./MarkDownComponent";
+import CitationSourcesComponent from "./CitationSourcesComponent";
 import { hasMarkdown, isAndroid } from "../../aiforwork_sdk_core/utils/utils";
 import { markdownStyles } from "./MarkDownStyles";
 const AnswerBubbleComponent = ({ item }: any) => {
@@ -20,25 +21,17 @@ const AnswerBubbleComponent = ({ item }: any) => {
           }
 
           return (
-            <Text key={citiation.answer} style={markdownStyles.bodyStyle}>
-              {citiation.answer}
-
-              {citiation?.sources?.map((source: any, index: number) => (
-                <TouchableOpacity
-                  key={source?.position}
-                  style={markdownStyles.badge}
-                  onPress={() => {
-                    // if (this.props.citationClicked) {
-                    //   this.props?.citationClicked(this.props.item, source);
-                    // }
-                  }}
-                >
-                  <View style={markdownStyles.badgeBase} key={source?.position}>
-                    <Text style={markdownStyles.text1}>{source?.position}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </Text>
+            <View>
+              <Text style={markdownStyles.bodyStyle}>
+                {citiation.answer}
+               
+              </Text>
+              <CitationSourcesComponent 
+                sources={citiation?.sources}    
+                item={item}
+              />
+             
+            </View>
           );
         })}
       </View>

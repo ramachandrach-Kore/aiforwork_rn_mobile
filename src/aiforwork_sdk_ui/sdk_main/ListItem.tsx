@@ -4,11 +4,15 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import QuestionBubble from "../sdk_components/QuestionBubble";
 import AnswerBubbleComponent from "../sdk_components/AnswerBubbleComponent";
 import SourcesComponent from "../sdk_components/SourcesComponent";
-import RequestFlow from "../sdk_components/RequestFlow";
+import RequestFlowParent from "../sdk_components/RequestFlowParent";
+import ResolveAmbiguityParent from "../sdk_templates/ResolveAmbiguityParent";
+import { AllTemplates } from "../sdk_templates/AllTemplatesConst";
 
 interface ListItemProps {
   item: any;
   onPress: (item: any) => void;
+  index: number;
+  isLastItem: boolean;
 }
 
 const renderQuestionBubble = (item: any) => {
@@ -19,16 +23,26 @@ const renderSuggestion = (item: any) => {
   return (
     <View>
       {/* Add your suggestion rendering logic here */}
-      <RequestFlow reqFlow={item?.reqFlow} />
+      <RequestFlowParent reqFlow={item?.reqFlow} messageState={item?.messageState}/>
     </View>
   );
 };
+const renderTemplate = (item: any,isLastItem:boolean) => {
 
-const renderAnswerBubble = (item: any) => {
+  if(item?.templateType === AllTemplates.RESOLVE_AMBIGUITY){
+    return <ResolveAmbiguityParent 
+    data={item} onClose={() => {}} onConfirmCallback={() => {}} 
+    isLastItem={isLastItem}
+    />;
+  }
+  return <></>
+};
+const renderAnswerBubble = (item: any,index:number,isLastItem:boolean) => {
   return (
     <View>
       {item?.reqFlow && item?.reqFlow?.length > 0 && renderSuggestion(item)}
-      <AnswerBubbleComponent item={item} />
+      {item?.templateType && renderTemplate(item,isLastItem)}
+      <AnswerBubbleComponent item={item}  />
     </View>
   );
 };
@@ -41,7 +55,8 @@ const renderSources = (item: any) => {
   );
 };
 // Optimized Item Component using React.memo
-const ListItem: React.FC<ListItemProps> = React.memo(({ item, onPress }) => {
+const ListItem: React.FC<ListItemProps> = ({ item, onPress,index,isLastItem }) => {
+  console.log(index," ", isLastItem," isLastItem", item?.templateType);
   const handlePress = useCallback(() => {
     onPress(item);
   }, [item, onPress]); 
@@ -49,11 +64,11 @@ const ListItem: React.FC<ListItemProps> = React.memo(({ item, onPress }) => {
   return (
     <View style={{ flex: 1, width: "100%", paddingHorizontal: 16 }}>
       {renderQuestionBubble(item)}
-      {renderAnswerBubble(item)}
+      {renderAnswerBubble(item,index,isLastItem)}
       {item?.sources?.length > 0 && renderSources(item)}
     </View>
   );
-});
+};
 
 const styles = StyleSheet.create({});
 

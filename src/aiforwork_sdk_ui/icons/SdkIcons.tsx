@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Path, G, Defs, ClipPath, Rect } from 'react-native-svg';
+import Svg, { Path, G, Defs, ClipPath, Rect, LinearGradient, Stop } from 'react-native-svg';
 import { normalize } from '../utils/CommonFunctions';
 
 interface IconProps {
@@ -71,11 +71,65 @@ export const DefaultImage: React.FC<IconProps> = ({
         fill="#98A2B3"
       />
       <Defs>
-        <linearGradient id="paint0_linear_1663_5908" x1="14" y1="0" x2="14" y2="28" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#F2F4F7"/>
-          <stop offset="1" stopColor="#D0D5DD"/>
-        </linearGradient>
+        <LinearGradient id="paint0_linear_1663_5908" x1="14" y1="0" x2="14" y2="28" gradientUnits="userSpaceOnUse">
+          <Stop stopColor="#F2F4F7"/>
+          <Stop offset="1" stopColor="#D0D5DD"/>
+        </LinearGradient>
       </Defs>
+    </Svg>
+  );
+}; 
+
+export const CloseIcon: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M15 5L5 15M5 5L15 15" 
+        stroke={color} 
+        strokeWidth="1.66667" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const ChevronDown: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M5 7.5L10 12.5L15 7.5" 
+        stroke={color} 
+        strokeWidth="1.66667" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const CheckMark: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M16.6666 5L7.49998 14.1667L3.33331 10" 
+        stroke={color} 
+        strokeWidth="1.67" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
     </Svg>
   );
 }; 
