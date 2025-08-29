@@ -133,3 +133,60 @@ export const CheckMark: React.FC<IconProps> = ({
     </Svg>
   );
 }; 
+
+export const SearchIcon: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        fillRule="evenodd" 
+        clipRule="evenodd" 
+        d="M9.58335 1.66669C5.2111 1.66669 1.66669 5.2111 1.66669 9.58335C1.66669 13.9556 5.2111 17.5 9.58335 17.5C11.4693 17.5 13.2012 16.8405 14.5611 15.7396L16.9108 18.0893C17.2362 18.4147 17.7638 18.4147 18.0893 18.0893C18.4147 17.7638 18.4147 17.2362 18.0893 16.9108L15.7396 14.5611C16.8405 13.2012 17.5 11.4693 17.5 9.58335C17.5 5.2111 13.9556 1.66669 9.58335 1.66669ZM3.33335 9.58335C3.33335 6.13157 6.13157 3.33335 9.58335 3.33335C13.0351 3.33335 15.8334 6.13157 15.8334 9.58335C15.8334 13.0351 13.0351 15.8334 9.58335 15.8334C6.13157 15.8334 3.33335 13.0351 3.33335 9.58335Z" 
+        fill={color}
+      />
+    </Svg>
+  );
+}; 
+
+export const NoResultSearch: React.FC<IconProps> = ({ 
+  width = normalize(56), 
+  height = normalize(56), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 56 56" fill="none">
+      <Rect x="4" y="4" width="48" height="48" rx="24" fill="#F5F5F5"/>
+      <Rect x="4" y="4" width="48" height="48" rx="24" stroke="#FAFAFA" strokeWidth="8"/>
+      <Path 
+        d="M37 37L33.5001 33.5M36 27.5C36 32.1944 32.1944 36 27.5 36C22.8056 36 19 32.1944 19 27.5C19 22.8056 22.8056 19 27.5 19C32.1944 19 36 22.8056 36 27.5Z" 
+        stroke="#737373" 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const AgenticAppEmptyState: React.FC<IconProps> = ({ 
+  width = normalize(56), 
+  height = normalize(56), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 56 56" fill="none">
+      <Rect x="4" y="4" width="48" height="48" rx="24" fill="#F5F5F5"/>
+      <Rect x="4" y="4" width="48" height="48" rx="24" stroke="#FAFAFA" strokeWidth="8"/>
+      <Path 
+        d="M29 18L20.0934 28.6879C19.7446 29.1064 19.5702 29.3157 19.5676 29.4925C19.5652 29.6461 19.6337 29.7923 19.7532 29.8889C19.8907 30 20.1632 30 20.708 30H28L27 38L35.9065 27.3121C36.2553 26.8936 36.4297 26.6843 36.4324 26.5075C36.4347 26.3539 36.3663 26.2077 36.2467 26.1111C36.1092 26 35.8368 26 35.292 26H28L29 18Z" 
+        stroke={color} 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 

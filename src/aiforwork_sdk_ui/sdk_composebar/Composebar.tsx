@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { ComposeBarProps } from './types/ComposeBarProps';
+import AgentsBtn from '../sdk_components/AgentsBtn';
 
 export interface ComposebarRef {
   clearComposeBarText: () => void;
@@ -75,6 +76,10 @@ const Composebar = forwardRef<ComposebarRef, ComposeBarProps>(({
     }
 
     return (
+      <View style={{flex:1,justifyContent:'flex-end',alignItems:'flex-end',flexDirection:'row'}}>
+        <AgentsBtn/>
+        
+     
       <TouchableOpacity
         style={[
           styles.sendButton,
@@ -107,6 +112,7 @@ const Composebar = forwardRef<ComposebarRef, ComposeBarProps>(({
           </View>
         )}
       </TouchableOpacity>
+      </View>
     );
   }, [sendButton, sendButtonDisabled, sendButtonStyle, onSendBtnPress, message, sendButtonIcon, sendButtonIconPosition, sendButtonIconStyle, sendButtonText, sendButtonTextStyle]);
 
