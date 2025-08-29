@@ -12,48 +12,36 @@ import {
 } from "react-native";
 import { normalize } from "../utils/CommonFunctions";
 import { isAndroid } from "../utils/CommonFunctions";
-import { LightBulb, ChevronDown } from "../icons";
+import { LightBulb, ChevronDown, CloseIcon } from "../icons";
 import Avatar from "../sdk_components/avatars/Avatar";
 import ChooseItem from "./ChooseItem";
 
 const { height: screenHeight } = Dimensions.get("window");
 
-interface AmbiguityData {
-  messageId?: string;
-  question?: string;
-  clientId?: string;
-  templateInfo?: {
-    ambiguous?: Array<{
-      id: string;
-      label: string;
-      value: {
-        choices: Array<any>;
-        selectedChoices?: Array<any>;
-        multi?: boolean;
-      };
-    }>;
-  };
-}
-
 interface ResolveAmbiguityModalProps {
   visible: boolean;
   onClose: () => void;
-  data?: AmbiguityData;
+  data?: any;
   onConfirmCallback?: (payload: any) => void;
 }
 
 // Simplified ResolveAmbiguityContent component for modal use
 const ResolveAmbiguityContent: React.FC<{
-  data?: AmbiguityData;
+  data?: any;
   onConfirm: (payload: any) => void;
 }> = ({ data, onConfirm }) => {
-  const [selectedChoices, setSelectedChoices] = useState<{
-    [key: string]: any[];
-  }>({});
   const [isChooseModalVisible, setIsChooseModalVisible] = useState(false);
   const [currentItemIndex, setCurrentItemIndex] = useState(-1);
   const [currentChoices, setCurrentChoices] = useState<any[]>([]);
-  
+  const [localData, setLocalData] = useState<any | undefined>(data);
+
+  // Update localData when data prop changes
+  useEffect(() => {
+    if (data) {
+      setLocalData(data);
+    }
+  }, [data]);
+
   // Animation values for drag functionality
   const translateY = useRef(new Animated.Value(0)).current;
 
@@ -70,7 +58,7 @@ const ResolveAmbiguityContent: React.FC<{
       },
       onPanResponderRelease: (_, gestureState) => {
         translateY.flattenOffset();
-        
+
         // If dragged down more than 100px, close the modal
         if (gestureState.dy > 100) {
           setIsChooseModalVisible(false);
@@ -99,31 +87,67 @@ const ResolveAmbiguityContent: React.FC<{
   };
 
   const handleChoiceSelection = (choices: any[]) => {
-    if (currentItemIndex >= 0 && data?.templateInfo?.ambiguous) {
-      const item = data.templateInfo.ambiguous[currentItemIndex];
-      setSelectedChoices((prev) => ({
-        ...prev,
-        [item.id]: choices,
-      }));
+    if (currentItemIndex >= 0 && localData?.templateInfo?.ambiguous) {
+      // Create a deep copy of the data to avoid mutating props
+      const updatedData = JSON.parse(JSON.stringify(localData));
+      updatedData.templateInfo.ambiguous[
+        currentItemIndex
+      ].value.selectedChoices = choices;
+
+      // Update local state to trigger re-render
+      setLocalData(updatedData);
     }
     setIsChooseModalVisible(false);
   };
 
+  const removeItem = (item: any) => {
+    if (currentItemIndex >= 0 && localData?.templateInfo?.ambiguous) {
+      let choice =
+        localData.templateInfo.ambiguous[currentItemIndex]?.value
+          ?.selectedChoices || [];
+
+      if (choice?.length > 0) {
+        const index = choice.findIndex(
+          (existingItem: any) => existingItem.id === item.id
+        );
+
+        if (
+          index !== -1 &&
+          localData.templateInfo.ambiguous[currentItemIndex]?.value
+            ?.selectedChoices
+        ) {
+          // Create a deep copy to avoid mutating props
+          const updatedData = JSON.parse(JSON.stringify(localData));
+          updatedData.templateInfo.ambiguous[
+            currentItemIndex
+          ].value.selectedChoices.splice(index, 1);
+
+          // Update local state to trigger re-render
+          setLocalData(updatedData);
+        }
+      }
+    }
+  };
+
   const getConfirmPayload = () => {
     const payload = {
-      messageId: data?.messageId,
-      question: data?.question,
-      clientId: data?.clientId,
+      messageId: localData?.messageId,
+      question: localData?.question,
+      clientId: localData?.clientId,
       resolvedAmbiguity: true,
       resolved: [] as any[],
-      boardId: data?.boardId,
     };
 
-    data?.templateInfo?.ambiguous?.forEach((option) => {
-      const choices = selectedChoices[option.id] || [option.value.choices?.[0]];
-      payload.resolved.push({
-        [option.id]: choices,
-      });
+    localData?.templateInfo?.ambiguous?.forEach((option) => {
+      const selectedChoices = option.value.selectedChoices;
+      let id = option?.id;
+      let data = {
+        [id]:
+          selectedChoices && selectedChoices.length > 0
+            ? selectedChoices
+            : [option.value.choices?.[0]],
+      };
+      payload.resolved.push(data);
     });
 
     return payload;
@@ -131,27 +155,29 @@ const ResolveAmbiguityContent: React.FC<{
 
   const isConfirmEnabled = () => {
     return (
-      data?.templateInfo?.ambiguous?.every((item) => {
-        const choices = selectedChoices[item.id];
-        if (item.value.multi) {
-          return choices && choices.length > 0;
-        }
-        return true;
+      localData?.templateInfo?.ambiguous?.every((item) => {
+        return item?.value?.multi === true
+          ? item.value &&
+              item.value.selectedChoices &&
+              item.value.selectedChoices.length > 0
+          : true;
       }) ?? false
     );
   };
 
   const getSelectedChoicesForCurrentItem = (): any[] => {
-    if (currentItemIndex >= 0 && data?.templateInfo?.ambiguous) {
-      const itemId = data.templateInfo.ambiguous[currentItemIndex]?.id;
-      return itemId ? selectedChoices[itemId] || [] : [];
+    if (currentItemIndex >= 0 && localData?.templateInfo?.ambiguous) {
+      return (
+        localData.templateInfo.ambiguous[currentItemIndex]?.value
+          ?.selectedChoices || []
+      );
     }
     return [];
   };
 
   const getCurrentItemType = (): "multiselect" | "dropdown" => {
-    if (currentItemIndex >= 0 && data?.templateInfo?.ambiguous) {
-      return data.templateInfo.ambiguous[currentItemIndex]?.value?.multi
+    if (currentItemIndex >= 0 && localData?.templateInfo?.ambiguous) {
+      return localData.templateInfo.ambiguous[currentItemIndex]?.value?.multi
         ? "multiselect"
         : "dropdown";
     }
@@ -159,54 +185,97 @@ const ResolveAmbiguityContent: React.FC<{
   };
 
   const renderItem = (item: any, index: number) => {
-    const choices = selectedChoices[item.id] || [item.value.choices?.[0]];
-    const isMultiSelect = item.value.multi || false;
+    const isMultiSelect = item?.value?.multi || false;
+
+    // Get options based on multi-select logic like ResolveAmbiguity.js
+    let options = !isMultiSelect
+      ? item?.value?.selectedChoices?.length > 0
+        ? item?.value?.selectedChoices
+        : [item?.value?.choices?.[0]]
+      : item?.value?.selectedChoices || [];
+
+    let Wrapper = options?.length > 0 ? View : TouchableOpacity;
 
     return (
-      <View key={item.id}>
+      <View key={item.id + index}>
         <Text style={styles.fieldHeaderText}>{item.label}</Text>
-        <TouchableOpacity
+        <Wrapper
           style={styles.inputFieldBorder}
           onPress={() => handleItemPress(item, index)}
         >
-          <View style={styles.choicesContainer}>
-            {choices?.map((choice, choiceIndex) => (
-              <View key={choiceIndex} style={styles.choiceItem}>
-                <Avatar
-                  rad={26}
-                  name={
-                    choice?.emailId
-                      ? choice?.fN || choice?.emailId
-                      : choice?.label
-                  }
-                  color={choice?.color}
-                  profileIcon={choice?.icon}
-                  textSize={normalize(14)}
-                  userId={choice?.id}
-                  fromProfile={false}
-                />
-                <Text style={styles.choiceText}>
-                  {choice?.fN ? `${choice.fN} ${choice.lN}` : choice?.label}
-                </Text>
-              </View>
-            ))}
-          </View>
-          <ChevronDown width={24} height={24} />
-        </TouchableOpacity>
+          {options?.length > 0 ? (
+            <View
+              style={[{ flex: 1 }, isMultiSelect && styles.multiSelectGrid]}
+            >
+              {options?.map((val: any, choiceIndex: number) => {
+                return (
+                  <TouchableOpacity
+                    key={choiceIndex}
+                    disabled={isMultiSelect}
+                    onPress={() => {
+                      handleItemPress(item, index);
+                    }}
+                    style={[
+                      styles.itemChip,
+                      isMultiSelect && {
+                        backgroundColor: "#F2F4F7",
+                        borderRadius: 100,
+                      },
+                    ]}
+                  >
+                    <Avatar
+                      rad={26}
+                      name={val?.emailId ? val?.fN || val?.emailId : val?.label}
+                      color={val?.color}
+                      profileIcon={val?.icon}
+                      textSize={normalize(14)}
+                      userId={val?.id}
+                      fromProfile={false}
+                    />
+                    <Text style={styles.itemText} numberOfLines={1}>
+                      {val?.fN ? val?.fN + " " + val?.lN : val?.label}
+                    </Text>
+                    {isMultiSelect && (
+                      <TouchableOpacity
+                        style={styles.removeButton}
+                        onPress={() => {
+                          removeItem(val);
+                        }}
+                      >
+                        <CloseIcon height={20} width={20} color={"#98A2B3"} />
+                      </TouchableOpacity>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ) : (
+            <View>
+              <Text style={styles.placeholderText}>Select</Text>
+            </View>
+          )}
+          <TouchableOpacity
+            style={styles.dropdownChevron}
+            onPress={() => {
+              handleItemPress(item, index);
+            }}
+          >
+            <ChevronDown width={24} height={24} />
+          </TouchableOpacity>
+        </Wrapper>
       </View>
     );
   };
-
   return (
     <View style={styles.contentContainer}>
       <Text style={styles.confirmationText}>
-        {data?.templateInfo?.ambiguous?.length === 1
-          ? `We found more than one result for "${data.templateInfo.ambiguous[0]?.label}". Please confirm`
+        {localData?.templateInfo?.ambiguous?.length === 1
+          ? `We found more than one result for "${localData.templateInfo.ambiguous[0]?.label}". Please confirm`
           : "There are conflicts on few inputs. Please confirm"}
       </Text>
 
       <ScrollView style={styles.scrollView}>
-        {data?.templateInfo?.ambiguous?.map((item, index) =>
+        {localData?.templateInfo?.ambiguous?.map((item, index) =>
           renderItem(item, index)
         )}
       </ScrollView>
@@ -242,12 +311,12 @@ const ResolveAmbiguityContent: React.FC<{
             activeOpacity={1}
             onPress={() => setIsChooseModalVisible(false)}
           />
-          <Animated.View 
+          <Animated.View
             style={[
               styles.chooseModalContent,
               {
-                transform: [{ translateY: translateY }]
-              }
+                transform: [{ translateY: translateY }],
+              },
             ]}
             {...panResponder.panHandlers}
           >
@@ -255,7 +324,7 @@ const ResolveAmbiguityContent: React.FC<{
             <View style={styles.dragHandle}>
               <View style={styles.dragHandleBar} />
             </View>
-            
+
             <ChooseItem
               recentSelectedItem={currentChoices as any}
               selectedChoices={getSelectedChoicesForCurrentItem() as any}
@@ -440,10 +509,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   contentContainer: {
-
     paddingHorizontal: 20,
-    
-   
   },
   confirmationText: {
     fontSize: normalize(15),
@@ -452,9 +518,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
   },
-  scrollView: {
-   
-  },
+  scrollView: {},
   fieldHeaderText: {
     fontSize: normalize(14),
     color: "#344054",
@@ -472,24 +536,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     width: "100%",
   },
-  choicesContainer: {
-    flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  choiceItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 8,
-    marginVertical: 2,
-  },
-  choiceText: {
-    fontSize: normalize(14),
-    color: "#101828",
-    marginStart: 8,
-    fontWeight: "500",
-    flexShrink: 1,
-  },
+
   confirmButton: {
     backgroundColor: "#101828",
     paddingVertical: 12,
@@ -523,25 +570,60 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 30,
     maxHeight: screenHeight * 0.8,
-    flex:1
+    flex: 1,
   },
   chooseModalBackdropTouchable: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
   },
   dragHandle: {
-    alignItems: 'center',
-  
+    alignItems: "center",
+
     paddingBottom: 8,
   },
   dragHandleBar: {
     width: 40,
     height: 4,
-    backgroundColor: '#E4E4E7',
+    backgroundColor: "#E4E4E7",
     borderRadius: 2,
+  },
+  multiSelectGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    flexShrink: 1,
+  },
+  itemChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    paddingStart: 4,
+    marginEnd: 3,
+    marginVertical: 3,
+    paddingEnd: 10,
+  },
+  itemText: {
+    fontSize: normalize(14),
+    color: "#101828",
+    marginStart: 8,
+    fontWeight: "500",
+    flexShrink: 1,
+  },
+  removeButton: {
+    padding: 3,
+    marginStart: 4,
+  },
+  placeholderText: {
+    fontSize: normalize(15),
+    color: "#98A2B3",
+    fontWeight: "400",
+  },
+  dropdownChevron: {
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginStart: 2,
   },
 });
 

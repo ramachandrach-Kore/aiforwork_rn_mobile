@@ -123,7 +123,7 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
       />
       <Composebar
         onSend={handleSendMessage}
-        sendButtonDisabled={isSendButtonDisabled}
+        sendButtonDisabled={recentMessage?.messageState === MessageState.SENDING}
       />
     </View>
   );

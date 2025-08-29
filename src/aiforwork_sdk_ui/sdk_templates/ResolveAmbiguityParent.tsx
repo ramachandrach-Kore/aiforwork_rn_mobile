@@ -1,58 +1,49 @@
 import { FC, useState } from "react";
 import ResolveAmbiguityModal from "./ResolveAmbiguityModal";
-import {Text,View} from "react-native";
+import { Text, View } from "react-native";
 import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
 interface ResolveAmbiguityParentProps {
-    data: any;
-    onClose: () => void;
-    onConfirmCallback: (data:any) => void;
-    isLastItem: boolean;
+  data: any;
+  onClose: () => void;
+  onConfirmCallback: (data: any) => void;
+  isLastItem: boolean;
 }
 
-const ResolveAmbiguityParent: FC<ResolveAmbiguityParentProps> = ({ data, onClose, 
-    onConfirmCallback,isLastItem }) => {
-const {  sendMessage} =
-  useMessagesStore();
+const ResolveAmbiguityParent: FC<ResolveAmbiguityParentProps> = ({
+  data,
+  onClose,
+  onConfirmCallback,
+  isLastItem,
+}) => {
+  const { sendMessage } = useMessagesStore();
 
-    const [isModalVisible, setIsModalVisible] = useState(isLastItem);
+  const [isModalVisible, setIsModalVisible] = useState(isLastItem);
 
-    const handleCloseModal = () => {
-        if(onClose){
-            onClose();
-        }
-        setIsModalVisible(false);
+  const handleCloseModal = () => {
+    if (onClose) {
+      onClose();
     }
+    setIsModalVisible(false);
+  };
 
-    const handleConfirModal = (data:any) => {
-        console.log('handleConfirModal=====',JSON.stringify(data));
-        // if(onConfirmCallback){
-        //    //    onConfirmCallback(data);
-        //    sendMessage(data);
-        // }
-        sendMessage(data);
-        setIsModalVisible(false);
-    }
-   if(isLastItem){
-        return (
-            <View >
-                <ResolveAmbiguityModal
-                    visible={isModalVisible}
-                    data={data}
-                    onClose={handleCloseModal}
-                    onConfirmCallback={handleConfirModal}
-                />
-            </View>
-        )
-    }
-    return <Text>Resolve Ambiguity</Text>
+  const handleConfirModal = (data: any) => {
+    sendMessage(data);
+    setIsModalVisible(false);
+  };
 
-    // return (
-    //     <ResolveAmbiguityModal
-    //         data={data}
-    //         onClose={onClose}
-    //         onConfirmCallback={onConfirmCallback}
-    //     />
-    // )
-}
+  if (isLastItem) {
+    return (
+      <View>
+        <ResolveAmbiguityModal
+          visible={isModalVisible}
+          data={data}
+          onClose={handleCloseModal}
+          onConfirmCallback={handleConfirModal}
+        />
+      </View>
+    );
+  }
+  return <> </>;
+};
 
 export default ResolveAmbiguityParent;
