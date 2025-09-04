@@ -7,6 +7,7 @@ import SourcesComponent from "../sdk_components/SourcesComponent";
 import RequestFlowParent from "../sdk_components/RequestFlowParent";
 import ResolveAmbiguityParent from "../sdk_templates/ResolveAmbiguityParent";
 import { AllTemplates } from "../sdk_templates/AllTemplatesConst";
+import Conversations from "../sdk_templates/Conversations";
 
 interface ListItemProps {
   item: any;
@@ -35,7 +36,14 @@ const renderTemplate = (item: any,isLastItem:boolean) => {
     isLastItem={isLastItem}
     />;
   }
-  return <></>
+  if(item?.templateType === AllTemplates.AGENT_WELCOME_TEMPLATE){
+  return <Conversations 
+  suggestions={item?.templateInfo?.suggestions} 
+  onQueryPress={() => {}}
+  boardId={item?.boardId}
+  />
+  }
+  return <Text>{item?.templateType} : Under Development</Text>
 };
 const renderAnswerBubble = (item: any,index:number,isLastItem:boolean) => {
   return (
@@ -56,7 +64,7 @@ const renderSources = (item: any) => {
 };
 // Optimized Item Component using React.memo
 const ListItem: React.FC<ListItemProps> = ({ item, onPress,index,isLastItem }) => {
-  console.log(index," ", isLastItem," isLastItem", item?.templateType);
+ // console.log(index," ", isLastItem," isLastItem", item?.templateType);
   const handlePress = useCallback(() => {
     onPress(item);
   }, [item, onPress]); 

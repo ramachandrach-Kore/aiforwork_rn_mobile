@@ -76,6 +76,11 @@ const AgentsBtn: React.FC<any> = ({}) => {
     closeModal();
   };
 
+  const callbackAgentPress = (agent: any) => {
+    closeModal();
+
+  };
+
   return (
     <View style={styles.container}>
       {/* Agents Button */}
@@ -122,7 +127,7 @@ const AgentsBtn: React.FC<any> = ({}) => {
             </View>
             
             <View style={styles.modalBody}>
-              <AllAgents />
+              <AllAgents callbackAgentPress={callbackAgentPress} />
             </View>
           </Animated.View>
         </View>

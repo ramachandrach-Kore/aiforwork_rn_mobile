@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { View, Text, FlatList } from "react-native";
 import ListItem from "./ListItem";
 import Composebar from "../sdk_composebar/Composebar";
@@ -6,6 +6,7 @@ import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
 import { BotChatStyles } from "./styles";
 import { MessageState } from "../../aiforwork_sdk_core/utils/MessageStates";
 import { TemplateNavigationHandler } from "./TemplateNavigationHandler";
+import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
 
 // Constants for FlatList optimization
 const FLATLIST_CONFIG = {
@@ -39,7 +40,9 @@ const ListFooter = React.memo(() => (
 const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
   const { messages, sendMessage, recentMessage, listenSocket } =
     useMessagesStore();
+  const { selectedAgent } = useAgentsStore();
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
     //it will listen to the socket
@@ -47,6 +50,15 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
 
     listenSocket();
   }, []);
+
+  useEffect(() => {
+    // Auto-scroll when a message is being sent
+    if (recentMessage?.messageState === MessageState.SENDING) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+      }, 100);
+    }
+  }, [recentMessage?.messageState]);
 
   // Initialize template navigation handler
   const templateNavigationHandler = useCallback(() => {
@@ -97,6 +109,33 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
         question: message,
         boardId: recentMessage?.boardId,
       };
+
+
+      if (
+        selectedAgent &&
+        selectedAgent !== null &&
+        selectedAgent !== undefined
+      ) {
+        const source = {
+          name: selectedAgent?.name,
+          docId: selectedAgent?.id,
+          source: selectedAgent?.id,
+          title: selectedAgent?.name,
+          icon: selectedAgent?.icon,
+          isAgent: true,
+        };
+  
+        let context = {
+          sources: [source],
+        
+        };
+  
+        messagePayload.context = context;
+      
+      }
+
+
+
       sendMessage(messagePayload);
     },
     [recentMessage, sendMessage]
@@ -106,6 +145,7 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
     <View style={BotChatStyles.container}>
       <ListHeader />
       <FlatList
+        ref={flatListRef}
         data={messages}
         keyExtractor={keyExtractor}
         renderItem={renderItem}

@@ -10,15 +10,18 @@ import { apiAgentsMiddleware } from "./middleware/apiAgentsMiddleware";
 export interface AgentsState {
   agentsLoading: boolean;
   agentsData: any;
+  selectedAgent: any;
 }
 
 export interface AgentsActions {
   getAgents: () => Promise<void>;
+  setLocalAgentSelection: (agent: any) => Promise<void>;
 }
 
 const initialState: AgentsState = {
   agentsLoading: false,
   agentsData: null,
+  selectedAgent: null,
 };
 
 export type AgentsStore = AgentsState & AgentsActions;
@@ -88,6 +91,14 @@ export const useAgentsStore = create<AgentsStore>()(
         // Re-throw the error if you want calling code to handle it
         throw error;
       }
+    },
+
+    setLocalAgentSelection: async (agent: any) => {
+      set((state) => {
+        state.selectedAgent = agent;
+        
+      });
+
     },
   }))
 );

@@ -22,6 +22,7 @@ export class MessageMiddlewareImpl implements MessageMiddleware {
     if(messageObject.boardId){
       messagePayload.boardId=messageObject.boardId;
     }
+    messagePayload={...messagePayload,...messageObject}
     return messagePayload
   }
 

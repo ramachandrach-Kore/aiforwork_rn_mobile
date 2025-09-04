@@ -76,22 +76,24 @@ interface Session {
   }>;
 }
 
-interface Props {
-  route?: {
-    params?: {
-      agents?: Agent[];
-      agenticApps?: Agent[];
-      onClickAgent?: (item: Agent) => void;
-      onClickCustomAgent?: (item: CommonAgent) => void;
-    };
-  };
+interface PropsData {
+  callbackAgentPress?: (agent: any) => void;
+  // route?: {
+  //   params?: {
+  //     agents?: any[];
+  //     agenticApps?: any[];
+  //     onClickAgent?: (item: any) => void;
+  //     onClickCustomAgent?: (item: CommonAgent) => void;
+  //   };
+  // };
   commonAgents?: CommonAgent[];
   session?: Session;
   t?: (key: string) => string;
 }
 
-const AllAgents: React.FC<Props> = (props) => {
-  const {agentsData,agentsLoading,getAgents} = useAgentsStore();
+const AllAgents: React.FC<PropsData> = (propsData) => {
+  const {agentsData,agentsLoading,getAgents,selectedAgent,setLocalAgentSelection} = useAgentsStore();
+  const { sendMessage } = useMessagesStore();
   const [keyword, setKeyword] = useState("");
   const [isFocused, setFocus] = useState(false);
   const [currentTab, setCurrentTab] = useState("agents");
@@ -103,6 +105,7 @@ const AllAgents: React.FC<Props> = (props) => {
   const [enabledCommonAgents, setCommonAgents] = useState([
     ...(agentsData?.commonAgents  || []),
   ]);
+  //const { sendMessage } = useMessagesStore();
 
   useEffect(() => {
     getAgents();
@@ -119,8 +122,8 @@ const AllAgents: React.FC<Props> = (props) => {
   }, [agentsData, currentTab]);
 
   useEffect(() => {
-    setCommonAgents([...(props?.commonAgents || [])]);
-  }, [props?.commonAgents]);
+    setCommonAgents([...(propsData?.commonAgents || [])]);
+  }, [propsData?.commonAgents]);
 
   const emptyStatesView = () => {
     let header = "No Apps Shared";
@@ -144,16 +147,27 @@ const AllAgents: React.FC<Props> = (props) => {
     );
   };
 
-  const onClickAgent = (item: Agent) => {
-    if (props.route?.params?.onClickAgent) {
-      props.route.params?.onClickAgent(item);
+  const onClickAgent = (item: any) => {
+    // if (props.route?.params?.onClickAgent) {
+    //   props.route.params?.onClickAgent(item);
+    // }else{
+     // onAgentPress(item);
     }
-  };
 
-  const onClickCustomAgent = (item: CommonAgent) => {
-    if (props.route?.params?.onClickCustomAgent) {
-      props.route.params?.onClickCustomAgent(item);
+
+  const onClickCustomAgent = (itemData: any) => {
+    // if (propsData.route?.params?.onClickCustomAgent) {
+    //   propsData.route.params?.onClickCustomAgent(item);
+    // }
+    let item = {
+      ...itemData,
+      isAgent: true,
     }
+    setLocalAgentSelection(item);
+    if(propsData.callbackAgentPress){
+    propsData.callbackAgentPress?.(item);
+    }
+    
   };
 
   const getHighlightedText = (text: string, highlight: string) => {
@@ -174,7 +188,7 @@ const AllAgents: React.FC<Props> = (props) => {
     });
   };
 
-  const renderItem = ({ item, index }: { item: Agent; index: number }) => {
+  const renderItem = ({ item, index }: { item: any; index: number }) => {
     let icons: string[] = [],
       count = 0;
     item?.config?.executionPipeline?.map((i) => {
@@ -188,7 +202,7 @@ const AllAgents: React.FC<Props> = (props) => {
       <TouchableOpacity
         style={styles.agentItemView}
         onPress={() => {
-          onClickAgent(item);
+          onAgentPress(item);
         }}
       >
         {currentTab === "agents" ? (
@@ -237,7 +251,7 @@ const AllAgents: React.FC<Props> = (props) => {
     if (text?.length === 0) {
       setAgents(agents || []);
     } else {
-      let filteredAgents = agents?.filter((item: Agent) => {
+      let filteredAgents = agents?.filter((item: any) => {
         let name = item?.name?.toLowerCase();
         return name?.includes(text?.trim()?.toLowerCase());
       });
@@ -333,6 +347,8 @@ const AllAgents: React.FC<Props> = (props) => {
 
   const renderCommonAgents = () => {
     let agents = enabledCommonAgents;
+    console.log("enabledCommonAgents in scroll---", enabledCommonAgents);
+    console.log("selectedAgent in scroll---", selectedAgent);
     return (
       <View style={styles.commonAgentsView}>
         <ScrollView
@@ -341,14 +357,15 @@ const AllAgents: React.FC<Props> = (props) => {
           showsHorizontalScrollIndicator={false}
           horizontal={true}
         >
-          {agents?.map((item, agentIndex) => {
+          {agents?.map((item: any, agentIndex: number) => {
             let isSelected = false;
-            let sessionSource = props?.session?.sources;
+            //let sessionSource = propsData?.session?.sources;
+
             if (
-              sessionSource?.length == 1 &&
-              sessionSource?.[0]?.isAgent === true
+              selectedAgent && selectedAgent !== null && selectedAgent !== undefined&&
+              selectedAgent?.isAgent === true
             ) {
-              isSelected = sessionSource?.[0]?.docId === item?.id;
+              isSelected = selectedAgent?.id === item?.id;
             }
             return (
               <TouchableOpacity
@@ -412,6 +429,36 @@ const AllAgents: React.FC<Props> = (props) => {
     );
   };
 
+  const onAgentPress = (agent: any) => {
+    setLocalAgentSelection(agent);
+    let question = `How can the ${agent?.name} bot agent assist me`;
+    const sources = {
+      name: agent?.name,
+      docId: agent?.id,
+      source: agent?.id,
+      title: agent?.name,
+      icon: agent?.icon,
+      isAgent: true,
+    };
+
+    let payload={
+      question:question,
+      source:agent?.id,
+      intent:'welcome',
+      context:{
+        sources:sources
+      },
+    
+     
+    }
+    sendMessage(payload)
+    propsData.callbackAgentPress?.(agent);
+  }
+
+
+
+  
+
   return (
     <View style={styles.container}>
       {renderCommonAgents()}
@@ -465,6 +512,8 @@ const AllAgents: React.FC<Props> = (props) => {
     </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

@@ -43,6 +43,7 @@ const messageMiddleware: MessageMiddleware = createMessageMiddleware();
 const apiMiddleware: ApiMessageMiddleware = createApiMessageMiddleware();
 
 export const useMessagesStore = create<MessagesStore>()(
+  
   immer((set, get) => ({
     ...initialState,
     fetchMessages: async () => {
@@ -80,6 +81,7 @@ export const useMessagesStore = create<MessagesStore>()(
           }
         });
 
+        console.log("===message==payload===>", message);
         // Use API middleware to send message
         const response = await apiMiddleware.sendMessageToAPI(message);
 
@@ -100,18 +102,19 @@ export const useMessagesStore = create<MessagesStore>()(
           }
         });
       } catch (error) {
-        console.log("=====error======>", error);
+        console.log(message?.reqId,"=====error======>", error);
 
         set((state) => {
           const messageIndex = state.messages.findIndex(
             (m) => m?.reqId === message?.reqId
           );
+          console.log(messageIndex,"=====messageIndex=failed=====>", messageIndex);
           if (messageIndex !== -1) {
             state.messages[messageIndex].messageState = MessageState.FAILED;
             state.messages[messageIndex]['status'] = "terminated"
             state.messages[messageIndex].error = {
               ...state.messages[messageIndex],
-              message: (error as Error).message || "Unknown error",
+              message: (error as Error)?.message || "Unknown error",
               timestamp: Date.now(),
               retryCount: 0,
             };

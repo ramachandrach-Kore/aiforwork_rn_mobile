@@ -7,3 +7,5 @@ export { CloseIcon } from './SdkIcons';
 export { DefaultImage } from './SdkIcons';
 export { SearchIcon } from './SdkIcons';
 export { NoResultSearch } from './SdkIcons';
+export { AgenticAppEmptyState } from './SdkIcons';
+export { QueriesIcon } from './SdkIcons';
