@@ -7,6 +7,8 @@ import { BotChatStyles } from "./styles";
 import { MessageState } from "../../aiforwork_sdk_core/utils/MessageStates";
 import { TemplateNavigationHandler } from "./TemplateNavigationHandler";
 import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
+import SourcesHorizontal from "../sdk_components/SourcesHorizontal";
+// import SourcesHorizontal from "../sdk_components/SourcesHorizontal";
 
 // Constants for FlatList optimization
 const FLATLIST_CONFIG = {
@@ -102,6 +104,24 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
     // You can add navigation, show modal, or any other action
   }, []);
 
+  // Handle context close action for SourcesHorizontal - commented out for testing
+  /* const handleContextCloseAction = (item: any) => {
+    // TODO: Implement logic to remove source from context
+    console.log('Remove source:', item);
+  };
+
+  // Handle sheet open action for SourcesHorizontal
+  const handleOpenSheet = (item: any) => {
+    // TODO: Implement sheet opening logic
+    console.log('Open sheet:', item);
+  };
+
+  // Handle reset filters for SourcesHorizontal
+  const handleResetFilters = () => {
+    // TODO: Implement filter reset logic
+    console.log('Reset filters');
+  }; */
+
   // Handle message sending
   const handleSendMessage = useCallback(
     (message: string) => {
@@ -138,12 +158,13 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
 
       sendMessage(messagePayload);
     },
-    [recentMessage, sendMessage]
+    [recentMessage, sendMessage,selectedAgent]
   );
 
   return (
     <View style={BotChatStyles.container}>
       <ListHeader />
+     
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -161,6 +182,7 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
         style={BotChatStyles.flatList}
         inverted
       />
+      <SourcesHorizontal session={recentMessage?.context}/>
       <Composebar
         onSend={handleSendMessage}
         sendButtonDisabled={recentMessage?.messageState === MessageState.SENDING}

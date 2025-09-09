@@ -1,0 +1,16 @@
+export { DocumentIcon } from './SourcesIcon';
+export { GmailIcon } from './SourcesIcon';
+export { GoogleDriveIcon } from './SourcesIcon';
+export { ImageIcon } from './SourcesIcon';
+export { PDFIcon } from './SourcesIcon';
+export { SlackIcon } from './SourcesIcon';
+export { SheetIcon } from './SourcesIcon';
+export { JiraIcon } from './SourcesIcon';
+export { OneDriveIcon } from './SourcesIcon';
+export { RefreshIcon } from './SourcesIcon';
+export { PptIcon } from './SourcesIcon';
+export { SlidesIcon } from './SourcesIcon';
+export { ZendeskIcon } from './SourcesIcon';
+export { OutlookIcon } from './SourcesIcon';
+export { TeamsIcon } from './SourcesIcon';
+export { FolderIcon } from './SourcesIcon';

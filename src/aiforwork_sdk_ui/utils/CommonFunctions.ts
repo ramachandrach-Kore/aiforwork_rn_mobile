@@ -59,3 +59,6 @@ export const redirect = (url: string) => {
     }
   });
 };
+
+
+export const SHEET_ID_LIST = ['gsheet', 'xls', 'xlsx'];

@@ -8,6 +8,7 @@ import {
   Dimensions,
   Animated,
   TouchableWithoutFeedback,
+  PanResponder,
 } from "react-native";
 import { normalize, isAndroid } from "../utils/CommonFunctions";
 import AllAgents from "./AllAgents";
@@ -36,7 +37,7 @@ const AgentsBtn: React.FC<any> = ({}) => {
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
   const openModal = () => {
-    console.log('openModal called, setting isModalVisible to true');
+    console.log("openModal called, setting isModalVisible to true");
     setIsModalVisible(true);
     // Slide up animation
     Animated.parallel([
@@ -54,7 +55,7 @@ const AgentsBtn: React.FC<any> = ({}) => {
   };
 
   const closeModal = () => {
-    console.log('closeModal called, setting isModalVisible to false');
+    console.log("closeModal called, setting isModalVisible to false");
     // Slide down animation
     Animated.parallel([
       Animated.timing(slideAnim, {
@@ -78,8 +79,41 @@ const AgentsBtn: React.FC<any> = ({}) => {
 
   const callbackAgentPress = (agent: any) => {
     closeModal();
-
   };
+
+  // Pan responder for drag gestures
+  const panResponder = React.useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => {
+        return true;
+      },
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        return gestureState.dy > 5; // Only respond to downward drags
+      },
+      onPanResponderGrant: (evt, gestureState) => {
+        // Pan responder granted
+      },
+      onPanResponderMove: (evt, gestureState) => {
+        // Only allow downward movement
+        if (gestureState.dy > 0) {
+          slideAnim.setValue(gestureState.dy);
+        }
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        if (gestureState.dy > 100 || gestureState.vy > 0.3) {
+          // Close modal if dragged down enough
+          closeModal();
+        } else {
+          // Snap back to original position
+          Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }).start();
+        }
+      },
+    })
+  ).current;
 
   return (
     <View style={styles.container}>
@@ -88,7 +122,6 @@ const AgentsBtn: React.FC<any> = ({}) => {
         <Text style={styles.buttonText}>Agents</Text>
       </TouchableOpacity>
 
-  
       {/* Modal */}
       <Modal
         visible={isModalVisible}
@@ -121,11 +154,11 @@ const AgentsBtn: React.FC<any> = ({}) => {
               },
             ]}
           >
-            {/* Handle Bar */}
-            <View style={styles.handleBar}>
+            {/* Draggable Handle Bar */}
+            <View style={styles.handleBar} {...panResponder.panHandlers}>
               <View style={styles.handle} />
             </View>
-            
+
             <View style={styles.modalBody}>
               <AllAgents callbackAgentPress={callbackAgentPress} />
             </View>

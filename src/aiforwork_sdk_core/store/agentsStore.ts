@@ -16,6 +16,7 @@ export interface AgentsState {
 export interface AgentsActions {
   getAgents: () => Promise<void>;
   setLocalAgentSelection: (agent: any) => Promise<void>;
+  removeLocalAgentSelection: () => Promise<void>;
 }
 
 const initialState: AgentsState = {
@@ -99,6 +100,12 @@ export const useAgentsStore = create<AgentsStore>()(
         
       });
 
+    },
+
+    removeLocalAgentSelection: async () => {
+      set((state) => {
+        state.selectedAgent = null;
+      });
     },
   }))
 );
