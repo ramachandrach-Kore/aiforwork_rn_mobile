@@ -26,6 +26,7 @@ export interface MessagesActions {
   sendMessage: (messageObject: any) => Promise<void>;
   resetStore: () => void;
   listenSocket: () => void;
+  updateMessageStatus: (payload: any, params: any) => Promise<void>;
 }
 
 export type MessagesStore = MessagesState & MessagesActions;
@@ -43,7 +44,6 @@ const messageMiddleware: MessageMiddleware = createMessageMiddleware();
 const apiMiddleware: ApiMessageMiddleware = createApiMessageMiddleware();
 
 export const useMessagesStore = create<MessagesStore>()(
-  
   immer((set, get) => ({
     ...initialState,
     fetchMessages: async () => {
@@ -102,16 +102,99 @@ export const useMessagesStore = create<MessagesStore>()(
           }
         });
       } catch (error) {
-        console.log(message?.reqId,"=====error======>", error);
+        console.log(message?.reqId, "=====error======>", error);
 
         set((state) => {
           const messageIndex = state.messages.findIndex(
             (m) => m?.reqId === message?.reqId
           );
-          console.log(messageIndex,"=====messageIndex=failed=====>", messageIndex);
+          console.log(
+            messageIndex,
+            "=====messageIndex=failed=====>",
+            messageIndex
+          );
           if (messageIndex !== -1) {
             state.messages[messageIndex].messageState = MessageState.FAILED;
-            state.messages[messageIndex]['status'] = "terminated"
+            state.messages[messageIndex]["status"] = "terminated";
+            state.messages[messageIndex].error = {
+              ...state.messages[messageIndex],
+              message: (error as Error)?.message || "Unknown error",
+              timestamp: Date.now(),
+              retryCount: 0,
+            };
+            state.recentMessage = state.messages[messageIndex];
+          }
+        });
+      }
+    },
+
+    updateMessageStatus: async (payload: any, params: any) => {
+      let message = {
+        messageState: MessageState.SENDING,
+      };
+
+      try {
+        // Add message to state with SENDING state
+        set((state) => {
+          //state.messages.push(message);
+          if (params?.messageId) {
+            const messageIndex = state.messages.findIndex(
+              (m) =>
+                m.reqId === params.reqId ||
+                (params.messageId && m.messageId === params.messageId)
+            );
+            if (messageIndex !== -1) {
+              state.messages[messageIndex] = {
+                ...state.messages[messageIndex],
+                ...message,
+              };
+            } else {
+              state.messages = [...state.messages, message];
+              state.recentMessage = message;
+            }
+          }
+        });
+
+        console.log("===updateMessageStatus==payload===>", message);
+        // Use API middleware to send message
+        const response = await apiMiddleware.updateMessageStatus(
+          payload,
+          params
+        );
+
+        console.log("===updateMessageStatus==response===>", response);
+
+        // Update message state to SENT on success
+        set((state) => {
+          const messageIndex = state.messages.findIndex(
+            (m) =>
+              m.reqId === params.reqId ||
+              (params.messageId && m.messageId === params.messageId)
+          );
+          if (messageIndex !== -1) {
+            state.messages[messageIndex].messageState = MessageState.SENT;
+            state.messages[messageIndex] = {
+              ...state.messages[messageIndex],
+              ...response,
+            }; // Store response data
+            state.recentMessage = state.messages[messageIndex];
+          }
+        });
+      } catch (error) {
+        console.log("=====updateMessageStatus======>", error);
+
+        set((state) => {
+          const messageIndex = state.messages.findIndex(
+            (m) => m?.messageId === params?.messageId
+          );
+          console.log(
+            messageIndex,
+            "=====updateMessageStatus=failed=====>",
+            messageIndex
+          );
+          if (messageIndex !== -1) {
+            state.messages[messageIndex].messageState = MessageState.FAILED;
+            state.messages[messageIndex]["status"] = "terminated";
             state.messages[messageIndex].error = {
               ...state.messages[messageIndex],
               message: (error as Error)?.message || "Unknown error",

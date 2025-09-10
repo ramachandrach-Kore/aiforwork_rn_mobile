@@ -8,6 +8,7 @@ import RequestFlowParent from "../sdk_components/RequestFlowParent";
 import ResolveAmbiguityParent from "../sdk_templates/ResolveAmbiguityParent";
 import { AllTemplates } from "../sdk_templates/AllTemplatesConst";
 import Conversations from "../sdk_templates/Conversations";
+import IntentAmbiguityParent from "../sdk_templates/IntentAmbiguityParent";
 
 interface ListItemProps {
   item: any;
@@ -29,7 +30,10 @@ const renderSuggestion = (item: any) => {
   );
 };
 const renderTemplate = (item: any,isLastItem:boolean) => {
-
+  if(item?.status==='discard'||item?.status==='terminated')
+  {
+    return <Text>Discarded, I see you interrupted the action. Please let me know how I can assist you further.</Text>;
+  }
   if(item?.templateType === AllTemplates.RESOLVE_AMBIGUITY){
     return <ResolveAmbiguityParent 
     data={item} onClose={() => {}} onConfirmCallback={() => {}} 
@@ -43,8 +47,18 @@ const renderTemplate = (item: any,isLastItem:boolean) => {
   boardId={item?.boardId}
   />
   }
-  return <Text>{item?.templateType} : Under Development</Text>
+  if(item?.templateType === AllTemplates.INTENT_AMBIGUITY){ 
+  return <IntentAmbiguityParent 
+  data={item}
+  isLastItem={isLastItem}
+ />
+  }
+  return <Text>{item?.templateType} : Under Development</Text>;
 };
+
+
+
+
 const renderAnswerBubble = (item: any,index:number,isLastItem:boolean) => {
   return (
     <View>
@@ -70,7 +84,7 @@ const ListItem: React.FC<ListItemProps> = ({ item, onPress,index,isLastItem }) =
   }, [item, onPress]); 
 
   return (
-    <View style={{ flex: 1, width: "100%", paddingHorizontal: 16 }}>
+    <View style={styles.container}>
       {renderQuestionBubble(item)}
       {renderAnswerBubble(item,index,isLastItem)}
       {item?.sources?.length > 0 && renderSources(item)}
@@ -78,6 +92,12 @@ const ListItem: React.FC<ListItemProps> = ({ item, onPress,index,isLastItem }) =
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: "100%",
+    paddingHorizontal: 16,
+  },
+});
 
 export default ListItem;
