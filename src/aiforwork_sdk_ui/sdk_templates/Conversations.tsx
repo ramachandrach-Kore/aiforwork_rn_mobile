@@ -170,7 +170,7 @@ const Conversations: React.FC<ConversationsProps> = (props) => {
 
     sendMessage(payload);
 
-    console.log("===selectedAgent=====>", payload);
+    
   };
 
   const renderSourceItem = ({

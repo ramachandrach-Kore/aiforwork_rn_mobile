@@ -85,6 +85,7 @@ export const useMessagesStore = create<MessagesStore>()(
         // Use API middleware to send message
         const response = await apiMiddleware.sendMessageToAPI(message);
 
+        console.log("===message==response===>", response);
         // Update message state to SENT on success
         set((state) => {
           const messageIndex = state.messages.findIndex(
@@ -223,7 +224,7 @@ export const useMessagesStore = create<MessagesStore>()(
           message?.data?.reqId === get().recentMessage?.reqId ||
           message?.data?.msgId === get().recentMessage?.messageId
         ) {
-          console.log("reqFlow: matched:-->", message);
+          
 
           // Find the message by msgId or reqId
           const messageIndex = get().messages?.findIndex(
@@ -251,7 +252,7 @@ export const useMessagesStore = create<MessagesStore>()(
           message?.data?.reqId === get().recentMessage?.reqId ||
           message?.data?.msgId === get().recentMessage?.messageId
         ) {
-          console.log("reqFlow: matched:-->", message);
+          
 
           // Find the message by msgId or reqId
           const messageIndex = get().messages?.findIndex(

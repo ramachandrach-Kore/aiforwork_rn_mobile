@@ -1,5 +1,7 @@
 // Export all icons with named exports for better tree shaking
 export { RightArrow } from './SdkIcons';
+export { RightChevron } from './SdkIcons';
+export { LeftChevron } from './SdkIcons';
 export { LightBulb } from './SdkIcons'; 
 export { CheckMark } from './SdkIcons';
 export { ChevronDown } from './SdkIcons';
@@ -9,3 +11,11 @@ export { SearchIcon } from './SdkIcons';
 export { NoResultSearch } from './SdkIcons';
 export { AgenticAppEmptyState } from './SdkIcons';
 export { QueriesIcon } from './SdkIcons';
+export { Calendar } from './SdkIcons';
+export { CalendarCheck } from './SdkIcons';
+export { CalendarDown } from './SdkIcons';
+export { CalendarLeft } from './SdkIcons';
+export { CheckBox } from './SdkIcons';
+export { CheckCircleBlack } from './SdkIcons';
+export { CheckCircleWhite } from './SdkIcons';
+export { DisableCheckBox } from './SdkIcons';

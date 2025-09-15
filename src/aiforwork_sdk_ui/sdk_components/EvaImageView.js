@@ -1,16 +1,15 @@
 import React, {useState, useMemo, useCallback} from 'react';
-import FastImage from 'react-native-fast-image';
 import {SvgUri} from 'react-native-svg';     
-import {View} from 'react-native';
+import {View, Image} from 'react-native';
 import { isAndroid, normalize } from '../utils/CommonFunctions';
 import { DefaultImage  } from '../icons/SdkIcons';
 const EvaImageView = React.memo((props) => {
-  const [fastImageError, setFastImageError] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const [svgError, setSvgError] = useState(false);
   const [fallback, setFallback] = useState(false);
 
-  const handleFastImageError = useCallback(() => {
-    setFastImageError(true);
+  const handleImageError = useCallback(() => {
+    setImageError(true);
   }, []);
 
   const handleSvgError = useCallback(() => {
@@ -30,7 +29,7 @@ const EvaImageView = React.memo((props) => {
     parentStyles,
   ], [width, height, parentStyles]);
 
-  const fastImageStyle = useMemo(() => [
+  const imageStyleMemo = useMemo(() => [
     {
       height: normalize(height),
       width: normalize(width),
@@ -39,12 +38,8 @@ const EvaImageView = React.memo((props) => {
     imageStyle,
   ], [width, height, imageStyle]);
 
-  const fastImageSource = useMemo(() => ({
+  const imageSource = useMemo(() => ({
     uri: url,
-    cache: isAndroid
-      ? FastImage.cacheControl.immutable
-      : FastImage.cacheControl.web,
-    priority: FastImage.priority.normal,
   }), [url]);
 
   // Early return if no URL provided
@@ -61,12 +56,12 @@ const EvaImageView = React.memo((props) => {
 
   return (
     <View style={containerStyle}>
-      {!fastImageError && !fallback ? (
-        <FastImage
-          style={fastImageStyle}
-          source={fastImageSource}
-          onError={handleFastImageError}
-          resizeMode={FastImage.resizeMode.contain}
+      {!imageError && !fallback ? (
+        <Image
+          style={imageStyleMemo}
+          source={imageSource}
+          onError={handleImageError}
+          resizeMode="contain"
         />
       ) : !svgError && !fallback ? (
         <SvgUri

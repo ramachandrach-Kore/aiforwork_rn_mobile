@@ -1,6 +1,4 @@
-import {Text, TouchableOpacity, View, StyleSheet} from 'react-native';
-
-import FastImage from 'react-native-fast-image';
+import {Text, TouchableOpacity, View, StyleSheet, Image} from 'react-native';
 import { isAndroid } from '../utils/CommonFunctions';
 import {Colors} from '../utils/Colors';
 
@@ -50,14 +48,8 @@ export const EmptyState = ({
               borderRadius: 40,
               marginBottom: 20,
             }}>
-            <FastImage
-              source={{
-                uri: iconUrl,
-                cache: isAndroid
-                  ? FastImage.cacheControl.immutable
-                  : FastImage.cacheControl.web,
-                priority: FastImage.priority.normal,
-              }}
+            <Image
+              source={{uri: iconUrl}}
               style={{width: 32, height: 32}}
               resizeMode="contain"
               onError={() => {}}

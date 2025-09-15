@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import TextAvatar from "./TextAvatar";
 
 import { isAndroid, isIOS } from "../../utils/CommonFunctions";
 import API_URL from "../../env.constants";
-import FastImage from "react-native-fast-image";
 import { generateBackgroundStyle, getColor } from "./helpers";
 
 const colors = [
@@ -85,13 +84,9 @@ const UserAvatar = (props) => {
         userId +
         "/d_64x64_profile.png";
       setInner(
-        <FastImage
+        <Image
           source={{
             uri: fromProfile ? uniqueURL : url,
-            cache: isAndroid
-              ? FastImage.cacheControl.immutable
-              : FastImage.cacheControl.web,
-            priority: FastImage.priority.normal,
           }}
           style={{ height, width }}
           resizeMode="contain"
@@ -116,13 +111,9 @@ const UserAvatar = (props) => {
       let uniqueURL = profileIcon;
 
       setInner(
-        <FastImage
+        <Image
           source={{
             uri: uniqueURL,
-            cache: isAndroid
-              ? FastImage.cacheControl.immutable
-              : FastImage.cacheControl.web,
-            priority: FastImage.priority.normal,
           }}
           style={{ height, width }}
           resizeMode="contain"

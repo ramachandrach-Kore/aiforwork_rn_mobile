@@ -9,6 +9,7 @@ import ResolveAmbiguityParent from "../sdk_templates/ResolveAmbiguityParent";
 import { AllTemplates } from "../sdk_templates/AllTemplatesConst";
 import Conversations from "../sdk_templates/Conversations";
 import IntentAmbiguityParent from "../sdk_templates/IntentAmbiguityParent";
+import InterruptionParent from "../sdk_templates/InterruptionParent";
 
 interface ListItemProps {
   item: any;
@@ -25,46 +26,87 @@ const renderSuggestion = (item: any) => {
   return (
     <View>
       {/* Add your suggestion rendering logic here */}
-      <RequestFlowParent reqFlow={item?.reqFlow} messageState={item?.messageState}/>
+      <RequestFlowParent
+        reqFlow={item?.reqFlow}
+        messageState={item?.messageState}
+      />
     </View>
   );
 };
-const renderTemplate = (item: any,isLastItem:boolean) => {
-  if(item?.status==='discard'||item?.status==='terminated')
-  {
-    return <Text>Discarded, I see you interrupted the action. Please let me know how I can assist you further.</Text>;
+const renderTemplate = (item: any, isLastItem: boolean) => {
+  if (item?.status === "discard" || item?.status === "terminated") {
+    return (
+      <Text>
+        Discarded, I see you interrupted the action. Please let me know how I
+        can assist you further.
+      </Text>
+    );
   }
-  if(item?.templateType === AllTemplates.RESOLVE_AMBIGUITY){
-    return <ResolveAmbiguityParent 
-    data={item} onClose={() => {}} onConfirmCallback={() => {}} 
-    isLastItem={isLastItem}
-    />;
+
+  switch (item?.templateType) {
+    case AllTemplates.RESOLVE_AMBIGUITY:
+      return (
+        <ResolveAmbiguityParent
+          data={item}
+          onClose={() => {}}
+          onConfirmCallback={() => {}}
+          isLastItem={isLastItem}
+        />
+      );
+
+    case AllTemplates.AGENT_WELCOME_TEMPLATE:
+      return (
+        <Conversations
+          suggestions={item?.templateInfo?.suggestions}
+          onQueryPress={() => {}}
+          boardId={item?.boardId}
+        />
+      );
+
+    case AllTemplates.INTENT_AMBIGUITY:
+      return <IntentAmbiguityParent data={item} isLastItem={isLastItem} />;
+
+    case AllTemplates.INTERRUPTION_TEMPLATE:
+      if(item?.status === "discard" || item?.status === "terminated"){
+        return <Text>Discarded, I see you interrupted the action. Please let me know how I can assist you further.</Text>;
+      }
+      return <InterruptionParent data={item} isLastItem={isLastItem} />;
+
+    default:
+      return <Text>{item?.templateType} : Under Development</Text>;
   }
-  if(item?.templateType === AllTemplates.AGENT_WELCOME_TEMPLATE){
-  return <Conversations 
-  suggestions={item?.templateInfo?.suggestions} 
-  onQueryPress={() => {}}
-  boardId={item?.boardId}
-  />
-  }
-  if(item?.templateType === AllTemplates.INTENT_AMBIGUITY){ 
-  return <IntentAmbiguityParent 
-  data={item}
-  isLastItem={isLastItem}
- />
-  }
-  return <Text>{item?.templateType} : Under Development</Text>;
 };
 
+//   if(item?.templateType === AllTemplates.RESOLVE_AMBIGUITY){
+//     return <ResolveAmbiguityParent
+//     data={item} onClose={() => {}} onConfirmCallback={() => {}}
+//     isLastItem={isLastItem}
+//     />;
+//   }
+//   if(item?.templateType === AllTemplates.AGENT_WELCOME_TEMPLATE){
+//   return <Conversations
+//   suggestions={item?.templateInfo?.suggestions}
+//   onQueryPress={() => {}}
+//   boardId={item?.boardId}
+//   />
+//   }
+//   if(item?.templateType === AllTemplates.INTENT_AMBIGUITY){
+//   return <IntentAmbiguityParent
+//   data={item}
+//   isLastItem={isLastItem}
+//  />
+//   }
+//   return <Text>{item?.templateType} : Under Development</Text>;
+// };
 
-
-
-const renderAnswerBubble = (item: any,index:number,isLastItem:boolean) => {
+const renderAnswerBubble = (item: any, index: number, isLastItem: boolean) => {
   return (
     <View>
       {item?.reqFlow && item?.reqFlow?.length > 0 && renderSuggestion(item)}
-      {item?.templateType && renderTemplate(item,isLastItem)}
-      <AnswerBubbleComponent item={item}  />
+      {item?.templateType &&
+        item?.templateType !== "search_answer" &&
+        renderTemplate(item, isLastItem)}
+      <AnswerBubbleComponent item={item} />
     </View>
   );
 };
@@ -77,16 +119,21 @@ const renderSources = (item: any) => {
   );
 };
 // Optimized Item Component using React.memo
-const ListItem: React.FC<ListItemProps> = ({ item, onPress,index,isLastItem }) => {
- // console.log(index," ", isLastItem," isLastItem", item?.templateType);
+const ListItem: React.FC<ListItemProps> = ({
+  item,
+  onPress,
+  index,
+  isLastItem,
+}) => {
+  // console.log(index," ", isLastItem," isLastItem", item?.templateType);
   const handlePress = useCallback(() => {
     onPress(item);
-  }, [item, onPress]); 
+  }, [item, onPress]);
 
   return (
     <View style={styles.container}>
       {renderQuestionBubble(item)}
-      {renderAnswerBubble(item,index,isLastItem)}
+      {renderAnswerBubble(item, index, isLastItem)}
       {item?.sources?.length > 0 && renderSources(item)}
     </View>
   );

@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   FlatList,
+  Image,
 } from "react-native";
 import _ from "lodash";
 import { normalize, SHEET_ID_LIST } from "../utils/CommonFunctions";
@@ -12,7 +13,6 @@ import { renderSourceIcons } from "../utils/SourcesUtils";
 // import { FlatList } from "react-native-gesture-handler";
 import { Loader } from "./Loader";
 import { Colors } from "../utils/Colors";
-import FastImage from "react-native-fast-image";
 import { isAndroid } from "../utils/CommonFunctions";
 import EvaImageView from "./EvaImageView";
 import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
@@ -79,20 +79,16 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
     if (item?.extIcon?.length > 0) {
       return (
         <View style={styles.sourceIconBadge}>
-          <FastImage
+          <Image
             source={{
               uri: item?.extIcon,
-              priority: FastImage.priority.normal,
-              cache: isAndroid
-                ? FastImage.cacheControl.immutable
-                : FastImage.cacheControl.web,
             }}
             style={{
               width: normalize(10),
               height: normalize(10),
               borderRadius: normalize(10),
             }}
-            resizeMode={FastImage.resizeMode.contain}
+            resizeMode="contain"
           />
         </View>
       );
@@ -193,19 +189,15 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
           </View>
         ) : item?.icon ? (
           <View style={styles.sourceIconWrapper}>
-            <FastImage
+            <Image
               source={{
                 uri: item?.icon,
-                priority: FastImage.priority.normal,
-                cache: isAndroid
-                  ? FastImage.cacheControl.immutable
-                  : FastImage.cacheControl.web,
               }}
               style={{
                 width: normalize(22),
                 height: normalize(22),
               }}
-              resizeMode={FastImage.resizeMode.contain}
+              resizeMode="contain"
             />
           </View>
         ) : IconComponent ? (
@@ -287,7 +279,7 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
     return renderSource(item, false);
   };
 
-  console.log("========Test========>", props.session);
+
   let allSources: any[] = [
     ...(Array.isArray(props.session?.sources) ? props.session.sources : []),
     ...(Array.isArray(props.docSelected?.files) ? props.docSelected.files : []),
@@ -298,7 +290,7 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
   if (selectedAgent) {
     allSources.push(selectedAgent);
   }
-  console.log("========Selected Agent========>", selectedAgent);
+
   if (allSources?.length > 0) {
     allSources = _.uniqBy(allSources, "docId");
   }

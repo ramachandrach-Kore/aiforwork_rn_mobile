@@ -1,5 +1,5 @@
 import React from 'react';
-import Svg, { Path, G, Defs, ClipPath, Rect, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Path, G, Defs, ClipPath, Rect, LinearGradient, Stop, Circle, Filter, FeFlood, FeColorMatrix, FeOffset, FeGaussianBlur, FeComposite, FeBlend } from 'react-native-svg';
 import { normalize } from '../utils/CommonFunctions';
 
 interface IconProps {
@@ -191,6 +191,42 @@ export const AgenticAppEmptyState: React.FC<IconProps> = ({
   );
 }; 
 
+export const RightChevron: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M7.5 15L12.5 10L7.5 5" 
+        stroke={color} 
+        strokeWidth="1.66667" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const LeftChevron: React.FC<IconProps> = ({ 
+  width = normalize(24), 
+  height = normalize(24), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 24 24" fill="none">
+      <Path 
+        d="M15 18L9 12L15 6" 
+        stroke={color} 
+        strokeWidth="2" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
 export const QueriesIcon: React.FC<IconProps> = ({ 
   width = normalize(16), 
   height = normalize(20), 
@@ -210,6 +246,166 @@ export const QueriesIcon: React.FC<IconProps> = ({
           <Stop offset="1" stopColor="#22CCEE"/>
         </LinearGradient>
       </Defs>
+    </Svg>
+  );
+}; 
+
+export const Calendar: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M17.5 8.33335H2.5M13.3333 1.66669V5.00002M6.66667 1.66669V5.00002M6.5 18.3334H13.5C14.9001 18.3334 15.6002 18.3334 16.135 18.0609C16.6054 17.8212 16.9878 17.4387 17.2275 16.9683C17.5 16.4336 17.5 15.7335 17.5 14.3334V7.33335C17.5 5.93322 17.5 5.23316 17.2275 4.69838C16.9878 4.22797 16.6054 3.84552 16.135 3.60584C15.6002 3.33335 14.9001 3.33335 13.5 3.33335H6.5C5.09987 3.33335 4.3998 3.33335 3.86502 3.60584C3.39462 3.84552 3.01217 4.22797 2.77248 4.69838C2.5 5.23316 2.5 5.93322 2.5 7.33335V14.3334C2.5 15.7335 2.5 16.4336 2.77248 16.9683C3.01217 17.4387 3.39462 17.8212 3.86502 18.0609C4.3998 18.3334 5.09987 18.3334 6.5 18.3334Z" 
+        stroke={color} 
+        strokeWidth="1.67" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const CalendarCheck: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M17.5 8.33335H2.5M13.3333 1.66669V5.00002M6.66667 1.66669V5.00002M7.5 13.3334L9.16667 15L12.9167 11.25M6.5 18.3334H13.5C14.9001 18.3334 15.6002 18.3334 16.135 18.0609C16.6054 17.8212 16.9878 17.4387 17.2275 16.9683C17.5 16.4336 17.5 15.7335 17.5 14.3334V7.33335C17.5 5.93322 17.5 5.23316 17.2275 4.69838C16.9878 4.22797 16.6054 3.84552 16.135 3.60584C15.6002 3.33335 14.9001 3.33335 13.5 3.33335H6.5C5.09987 3.33335 4.3998 3.33335 3.86502 3.60584C3.39462 3.84552 3.01217 4.22797 2.77248 4.69838C2.5 5.23316 2.5 5.93322 2.5 7.33335V14.3334C2.5 15.7335 2.5 16.4336 2.77248 16.9683C3.01217 17.4387 3.39462 17.8212 3.86502 18.0609C4.3998 18.3334 5.09987 18.3334 6.5 18.3334Z" 
+        stroke={color} 
+        strokeWidth="1.67" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const CalendarDown: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M6.66667 10L10 13.3333M10 13.3333L13.3333 10M10 13.3333V6.66667M6.5 17.5H13.5C14.9001 17.5 15.6002 17.5 16.135 17.2275C16.6054 16.9878 16.9878 16.6054 17.2275 16.135C17.5 15.6002 17.5 14.9001 17.5 13.5V6.5C17.5 5.09987 17.5 4.3998 17.2275 3.86502C16.9878 3.39462 16.6054 3.01217 16.135 2.77248C15.6002 2.5 14.9001 2.5 13.5 2.5H6.5C5.09987 2.5 4.3998 2.5 3.86502 2.77248C3.39462 3.01217 3.01217 3.39462 2.77248 3.86502C2.5 4.3998 2.5 5.09987 2.5 6.5V13.5C2.5 14.9001 2.5 15.6002 2.77248 16.135C3.01217 16.6054 3.39462 16.9878 3.86502 17.2275C4.3998 17.5 5.09987 17.5 6.5 17.5Z" 
+        stroke={color} 
+        strokeWidth="1.67" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const CalendarLeft: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = 'currentColor' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M10 6.66667L6.66667 10M6.66667 10L10 13.3333M6.66667 10H13.3333M6.5 17.5H13.5C14.9001 17.5 15.6002 17.5 16.135 17.2275C16.6054 16.9878 16.9878 16.6054 17.2275 16.135C17.5 15.6002 17.5 14.9001 17.5 13.5V6.5C17.5 5.09987 17.5 4.3998 17.2275 3.86502C16.9878 3.39462 16.6054 3.01217 16.135 2.77248C15.6002 2.5 14.9001 2.5 13.5 2.5H6.5C5.09987 2.5 4.3998 2.5 3.86502 2.77248C3.39462 3.01217 3.01217 3.39462 2.77248 3.86502C2.5 4.3998 2.5 5.09987 2.5 6.5V13.5C2.5 14.9001 2.5 15.6002 2.77248 16.135C3.01217 16.6054 3.39462 16.9878 3.86502 17.2275C4.3998 17.5 5.09987 17.5 6.5 17.5Z" 
+        stroke={color} 
+        strokeWidth="1.67" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}; 
+
+export const CheckBox: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = '#475467' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <G clipPath="url(#clip0_283_956)">
+        <Rect width="20" height="20" rx="10" fill={color}/>
+        <G filter="url(#filter0_d_283_956)">
+          <Circle cx="10" cy="10" r="4" fill="white"/>
+        </G>
+      </G>
+      <Rect x="0.5" y="0.5" width="19" height="19" rx="9.5" stroke={color}/>
+      <Defs>
+        <Filter id="filter0_d_283_956" x="2" y="6" width="16" height="16" filterUnits="userSpaceOnUse">
+          <FeFlood floodOpacity="0" result="BackgroundImageFix"/>
+          <FeColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+          <FeOffset dy="4"/>
+          <FeGaussianBlur stdDeviation="2"/>
+          <FeComposite in2="hardAlpha" operator="out"/>
+          <FeColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+          <FeBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_283_956"/>
+          <FeBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_283_956" result="shape"/>
+        </Filter>
+        <ClipPath id="clip0_283_956">
+          <Rect width="20" height="20" rx="10" fill="white"/>
+        </ClipPath>
+      </Defs>
+    </Svg>
+  );
+}; 
+
+export const CheckCircleBlack: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = '#101828' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        fillRule="evenodd" 
+        clipRule="evenodd" 
+        d="M9.99992 0.833332C4.93731 0.833332 0.833252 4.93739 0.833252 10C0.833252 15.0626 4.93731 19.1667 9.99992 19.1667C15.0625 19.1667 19.1666 15.0626 19.1666 10C19.1666 4.93739 15.0625 0.833332 9.99992 0.833332ZM14.3392 8.08925C14.6646 7.76382 14.6646 7.23618 14.3392 6.91074C14.0137 6.58531 13.4861 6.58531 13.1607 6.91074L8.74992 11.3215L6.83917 9.41074C6.51374 9.08531 5.9861 9.08531 5.66066 9.41074C5.33523 9.73618 5.33523 10.2638 5.66066 10.5893L8.16066 13.0893C8.4861 13.4147 9.01374 13.4147 9.33917 13.0893L14.3392 8.08925Z" 
+        fill={color}
+      />
+    </Svg>
+  );
+}; 
+
+export const CheckCircleWhite: React.FC<IconProps> = ({ 
+  width = normalize(21), 
+  height = normalize(21), 
+  color = '#131316' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 21 21" fill="none">
+      <G clipPath="url(#clip0_1495_7259)">
+        <Path 
+          d="M7.19189 10.9115L9.69189 13.4115L14.6919 8.41146M19.2752 10.9115C19.2752 15.5138 15.5443 19.2448 10.9419 19.2448C6.33952 19.2448 2.60856 15.5138 2.60856 10.9115C2.60856 6.30909 6.33952 2.57812 10.9419 2.57812C15.5443 2.57812 19.2752 6.30909 19.2752 10.9115Z" 
+          stroke={color} 
+          strokeWidth="1.66667" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+        />
+      </G>
+      <Defs>
+        <ClipPath id="clip0_1495_7259">
+          <Rect width="20" height="20" fill="white" transform="translate(0.941895 0.912109)"/>
+        </ClipPath>
+      </Defs>
+    </Svg>
+  );
+}; 
+
+export const DisableCheckBox: React.FC<IconProps> = ({ 
+  width = normalize(16), 
+  height = normalize(16), 
+  color = '#D0D5DD' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 16 16" fill="none">
+      <Rect x="0.5" y="0.5" width="15" height="15" rx="7.5" fill="#F9FAFB"/>
+      <Rect x="0.5" y="0.5" width="15" height="15" rx="7.5" stroke={color}/>
     </Svg>
   );
 }; 
