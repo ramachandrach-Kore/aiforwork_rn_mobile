@@ -113,11 +113,14 @@ const IntentAmbiguity: React.FC<IntentAmbiguityProps> = (props) => {
           onPress={() => selectChoice(item, true)}
           style={styles.choiceView}
         >
-          <Image
-            style={{ width: normalize(30), height: normalize(30) }}
-            resizeMode="contain"
-            source={{ uri: item?.icon }}
-          />
+           {item?.icon && (
+            <EvaImageView
+              url={item?.icon}
+              width={normalize(30)}
+              height={normalize(30)}
+            />
+          )}
+          
           <View>
             <Text style={styles.headerText} numberOfLines={1}>
               {item?.title}

@@ -19,6 +19,7 @@ export interface MessagesState {
   moreAvailable: boolean;
   currentBoard: any;
   recentMessage: any;
+  failedMessage: any;
 }
 
 export interface MessagesActions {
@@ -37,6 +38,7 @@ const initialState: MessagesState = {
   moreAvailable: false,
   currentBoard: null,
   recentMessage: null,
+  failedMessage: 0,
 };
 
 // Create separate middleware instances
@@ -94,11 +96,11 @@ export const useMessagesStore = create<MessagesStore>()(
               (message.messageId && m.messageId === message.messageId)
           );
           if (messageIndex !== -1) {
-            state.messages[messageIndex].messageState = MessageState.SENT;
             state.messages[messageIndex] = {
               ...state.messages[messageIndex],
               ...response,
             }; // Store response data
+            state.messages[messageIndex].messageState = MessageState.SENT;
             state.recentMessage = state.messages[messageIndex];
           }
         });
@@ -109,16 +111,11 @@ export const useMessagesStore = create<MessagesStore>()(
           const messageIndex = state.messages.findIndex(
             (m) => m?.reqId === message?.reqId
           );
-          console.log(
-            messageIndex,
-            "=====messageIndex=failed=====>",
-            messageIndex
-          );
+         
           if (messageIndex !== -1) {
             state.messages[messageIndex].messageState = MessageState.FAILED;
             state.messages[messageIndex]["status"] = "terminated";
             state.messages[messageIndex].error = {
-              ...state.messages[messageIndex],
               message: (error as Error)?.message || "Unknown error",
               timestamp: Date.now(),
               retryCount: 0,
@@ -156,7 +153,7 @@ export const useMessagesStore = create<MessagesStore>()(
           }
         });
 
-        console.log("===updateMessageStatus==payload===>", message);
+        console.log(payload, "===updateMessageStatus==payload===>", params);
         // Use API middleware to send message
         const response = await apiMiddleware.updateMessageStatus(
           payload,
@@ -181,27 +178,21 @@ export const useMessagesStore = create<MessagesStore>()(
             state.recentMessage = state.messages[messageIndex];
           }
         });
-      } catch (error) {
+      } catch (error: any) {
         console.log("=====updateMessageStatus======>", error);
 
         set((state) => {
           const messageIndex = state.messages.findIndex(
             (m) => m?.messageId === params?.messageId
           );
-          console.log(
-            messageIndex,
-            "=====updateMessageStatus=failed=====>",
-            messageIndex
-          );
+          console.log("=====updateMessageStatus=failed===1==>", messageIndex);
+
           if (messageIndex !== -1) {
             state.messages[messageIndex].messageState = MessageState.FAILED;
+
             state.messages[messageIndex]["status"] = "terminated";
-            state.messages[messageIndex].error = {
-              ...state.messages[messageIndex],
-              message: (error as Error)?.message || "Unknown error",
-              timestamp: Date.now(),
-              retryCount: 0,
-            };
+
+            state.failedMessage = state.failedMessage + 1;
             state.recentMessage = state.messages[messageIndex];
           }
         });
@@ -224,8 +215,6 @@ export const useMessagesStore = create<MessagesStore>()(
           message?.data?.reqId === get().recentMessage?.reqId ||
           message?.data?.msgId === get().recentMessage?.messageId
         ) {
-          
-
           // Find the message by msgId or reqId
           const messageIndex = get().messages?.findIndex(
             (msg) =>
@@ -252,8 +241,6 @@ export const useMessagesStore = create<MessagesStore>()(
           message?.data?.reqId === get().recentMessage?.reqId ||
           message?.data?.msgId === get().recentMessage?.messageId
         ) {
-          
-
           // Find the message by msgId or reqId
           const messageIndex = get().messages?.findIndex(
             (msg) =>

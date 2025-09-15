@@ -36,7 +36,6 @@ import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
 
 //Didn't got any uttrance for this template, to check remaining code, cross checked with services & Qa team.
 
-
 // Interface for component props
 interface InterruptionProps {
   data?: any;
@@ -791,10 +790,14 @@ class Interruption extends React.PureComponent<InterruptionProps, any> {
     );
   };
   discardActionPress = (data: any) => {
-    let param = {
-      boardId: data?.boardId,
+    let param: any = {
       messageId: data?.messageId || data?.id,
     };
+    if (data?.boardId) {
+      param.boardId = data?.boardId;
+    }
+
+    console.log(param, "===discardActionPress==param===>", data);
     let payload = {
       status: "discard",
     };

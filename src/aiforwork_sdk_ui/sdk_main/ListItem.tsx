@@ -34,15 +34,6 @@ const renderSuggestion = (item: any) => {
   );
 };
 const renderTemplate = (item: any, isLastItem: boolean) => {
-  if (item?.status === "discard" || item?.status === "terminated") {
-    return (
-      <Text>
-        Discarded, I see you interrupted the action. Please let me know how I
-        can assist you further.
-      </Text>
-    );
-  }
-
   switch (item?.templateType) {
     case AllTemplates.RESOLVE_AMBIGUITY:
       return (
@@ -64,12 +55,10 @@ const renderTemplate = (item: any, isLastItem: boolean) => {
       );
 
     case AllTemplates.INTENT_AMBIGUITY:
+    case AllTemplates.ITEMS_AMBIGUITY_TEMPLATE:
       return <IntentAmbiguityParent data={item} isLastItem={isLastItem} />;
 
     case AllTemplates.INTERRUPTION_TEMPLATE:
-      if(item?.status === "discard" || item?.status === "terminated"){
-        return <Text>Discarded, I see you interrupted the action. Please let me know how I can assist you further.</Text>;
-      }
       return <InterruptionParent data={item} isLastItem={isLastItem} />;
 
     default:
@@ -77,36 +66,17 @@ const renderTemplate = (item: any, isLastItem: boolean) => {
   }
 };
 
-//   if(item?.templateType === AllTemplates.RESOLVE_AMBIGUITY){
-//     return <ResolveAmbiguityParent
-//     data={item} onClose={() => {}} onConfirmCallback={() => {}}
-//     isLastItem={isLastItem}
-//     />;
-//   }
-//   if(item?.templateType === AllTemplates.AGENT_WELCOME_TEMPLATE){
-//   return <Conversations
-//   suggestions={item?.templateInfo?.suggestions}
-//   onQueryPress={() => {}}
-//   boardId={item?.boardId}
-//   />
-//   }
-//   if(item?.templateType === AllTemplates.INTENT_AMBIGUITY){
-//   return <IntentAmbiguityParent
-//   data={item}
-//   isLastItem={isLastItem}
-//  />
-//   }
-//   return <Text>{item?.templateType} : Under Development</Text>;
-// };
-
 const renderAnswerBubble = (item: any, index: number, isLastItem: boolean) => {
   return (
     <View>
       {item?.reqFlow && item?.reqFlow?.length > 0 && renderSuggestion(item)}
+      {item?.status !== "discard" && item?.status !== "terminated" && (
+        <AnswerBubbleComponent item={item} />
+      )}
       {item?.templateType &&
         item?.templateType !== "search_answer" &&
         renderTemplate(item, isLastItem)}
-      <AnswerBubbleComponent item={item} />
+    
     </View>
   );
 };
@@ -133,7 +103,15 @@ const ListItem: React.FC<ListItemProps> = ({
   return (
     <View style={styles.container}>
       {renderQuestionBubble(item)}
-      {renderAnswerBubble(item, index, isLastItem)}
+      {item?.status === "discard" || item?.status === "terminated" ? (
+        <Text style={styles.discardedText}>
+          Discarded, I see you interrupted the action. Please let me know how I
+          can assist you further.
+        </Text>
+      ) : (
+        renderAnswerBubble(item, index, isLastItem)
+      )}
+
       {item?.sources?.length > 0 && renderSources(item)}
     </View>
   );
@@ -144,6 +122,12 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     paddingHorizontal: 16,
+  },
+  discardedText: {
+    fontSize: 16,
+   
+    color: "red",
+    marginVertical: 16,
   },
 });
 

@@ -40,10 +40,11 @@ const ListFooter = React.memo(() => (
 ));
 
 const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
-  const { messages, sendMessage, recentMessage, listenSocket } =
+  const { messages, sendMessage, recentMessage, listenSocket,failedMessage } =
     useMessagesStore();
   const { selectedAgent } = useAgentsStore();
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
+  const [failed, setFailed] = useState(0);
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -71,7 +72,7 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
     if (recentMessage) {
       const shouldDisableButton =
         recentMessage.messageState === MessageState.SENDING;
-      setIsSendButtonDisabled(shouldDisableButton);
+        setIsSendButtonDisabled(shouldDisableButton);
 
       if (
         recentMessage?.templateType &&
@@ -84,6 +85,11 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
       }
     }
   }, [recentMessage, templateNavigationHandler]);
+
+  useEffect(() => {
+    setFailed(prev => prev + 1);
+  }, [failedMessage]);
+  
 
   const keyExtractor = useCallback(
     (item: any) => item?.reqId || item?.messageId || "",
@@ -185,7 +191,7 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
       <SourcesHorizontal session={recentMessage?.context}/>
       <Composebar
         onSend={handleSendMessage}
-        sendButtonDisabled={recentMessage?.messageState === MessageState.SENDING}
+        sendButtonDisabled={messages?.[0]?.messageState === MessageState.SENDING}
       />
     </View>
   );
