@@ -10,6 +10,7 @@ import { AllTemplates } from "../sdk_templates/AllTemplatesConst";
 import Conversations from "../sdk_templates/Conversations";
 import IntentAmbiguityParent from "../sdk_templates/IntentAmbiguityParent";
 import InterruptionParent from "../sdk_templates/InterruptionParent";
+import ConnectionProvider from "../sdk_templates/ConnectionProvider";
 
 interface ListItemProps {
   item: any;
@@ -61,6 +62,8 @@ const renderTemplate = (item: any, isLastItem: boolean) => {
     case AllTemplates.INTERRUPTION_TEMPLATE:
       return <InterruptionParent data={item} isLastItem={isLastItem} />;
 
+    case AllTemplates.CONNECTION_PROVIDER:
+      return <ConnectionProvider data={item} isLastItem={isLastItem} />;
     default:
       return <Text>{item?.templateType} : Under Development</Text>;
   }

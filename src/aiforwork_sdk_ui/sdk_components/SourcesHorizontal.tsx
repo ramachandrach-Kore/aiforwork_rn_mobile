@@ -18,7 +18,6 @@ import EvaImageView from "./EvaImageView";
 import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
 import { ChevronDown, CloseIcon } from "../icons";
 
-
 interface SessionData {
   sources?: any[];
 }
@@ -40,36 +39,36 @@ interface SourcesHorizontalProps {
 
 const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
   const listRef = useRef<FlatList>(null);
-  const { selectedAgent,removeLocalAgentSelection } = useAgentsStore();
+  const { selectedAgent, removeLocalAgentSelection } = useAgentsStore();
+ 
+  // useEffect(() => {
+  //   if (
+  //     props.sessionRequestSources?.length &&
+  //     props.sessionRequestSources?.length > 0
+  //   ) {
+  //     try {
+  //       listRef?.current?.scrollToIndex({
+  //         animated: true,
+  //         index: props.session?.sources?.length || 0,
+  //         viewPosition: 1,
+  //       });
+  //     } catch (e) {}
+  //   }
+  // }, [props.sessionRequestSources]);
 
-  useEffect(() => {
-    if (
-      props.sessionRequestSources?.length &&
-      props.sessionRequestSources?.length > 0
-    ) {
-      try {
-        listRef?.current?.scrollToIndex({
-          animated: true,
-          index: props.session?.sources?.length || 0,
-          viewPosition: 1,
-        });
-      } catch (e) {}
-    }
-  }, [props.sessionRequestSources]);
-
-  useEffect(() => {
-    if (props.session?.sources?.length && props.session?.sources?.length > 0) {
-      try {
-        listRef?.current?.scrollToIndex({
-          animated: true,
-          index: props.session?.sources?.length
-            ? props.session?.sources?.length - 1
-            : 0,
-          viewPosition: 0.5,
-        });
-      } catch (e) {}
-    }
-  }, [props.session?.sources?.length]);
+  // useEffect(() => {
+  //   if (props.session?.sources?.length && props.session?.sources?.length > 0) {
+  //     try {
+  //       listRef?.current?.scrollToIndex({
+  //         animated: true,
+  //         index: props.session?.sources?.length
+  //           ? props.session?.sources?.length - 1
+  //           : 0,
+  //         viewPosition: 0.5,
+  //       });
+  //     } catch (e) {}
+  //   }
+  // }, [props.session?.sources?.length]);
 
   const sheetDropDownClick = (item: any): void => {
     //props.openSheet(item);
@@ -79,16 +78,11 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
     if (item?.extIcon?.length > 0) {
       return (
         <View style={styles.sourceIconBadge}>
-          <Image
-            source={{
-              uri: item?.extIcon,
-            }}
-            style={{
-              width: normalize(10),
-              height: normalize(10),
-              borderRadius: normalize(10),
-            }}
-            resizeMode="contain"
+          <EvaImageView
+            url={item?.extIcon}
+            width={10}
+            height={10}
+            imageStyle={{ borderRadius: normalize(10) }}
           />
         </View>
       );
@@ -116,17 +110,16 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
       type = ""; // Service dependency .
     }
 
-    const contextCloseAction=(item:any)=>{
+    const contextCloseAction = (item: any) => {
       removeLocalAgentSelection();
       props.contextCloseAction?.(item);
-    }
+    };
     const IconComponent = type
       ? (renderSourceIcons(
           type?.toLowerCase(),
           true
         ) as React.ComponentType<any>)
       : null;
-    console.log(type, "========IconComponent========>", IconComponent);
     let showLoader = true;
 
     if (selectedAgent) {
@@ -189,7 +182,7 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
           </View>
         ) : item?.icon ? (
           <View style={styles.sourceIconWrapper}>
-            <Image
+            {/* <Image
               source={{
                 uri: item?.icon,
               }}
@@ -198,6 +191,13 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
                 height: normalize(22),
               }}
               resizeMode="contain"
+            /> */}
+            <EvaImageView
+              url={item?.icon}
+              width={22}
+              height={22}
+              imageStyle={{ borderRadius: 2 }}
+              parentStyles={{}}
             />
           </View>
         ) : IconComponent ? (
@@ -278,7 +278,6 @@ const SourcesHorizontal: React.FC<SourcesHorizontalProps> = (props) => {
   }): JSX.Element => {
     return renderSource(item, false);
   };
-
 
   let allSources: any[] = [
     ...(Array.isArray(props.session?.sources) ? props.session.sources : []),

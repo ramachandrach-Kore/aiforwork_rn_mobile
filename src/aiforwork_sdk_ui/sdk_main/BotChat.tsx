@@ -40,7 +40,7 @@ const ListFooter = React.memo(() => (
 ));
 
 const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
-  const { messages, sendMessage, recentMessage, listenSocket,failedMessage } =
+  const { messages, sendMessage, recentMessage, listenSocket, failedMessage } =
     useMessagesStore();
   const { selectedAgent } = useAgentsStore();
   const [isSendButtonDisabled, setIsSendButtonDisabled] = useState(false);
@@ -72,7 +72,7 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
     if (recentMessage) {
       const shouldDisableButton =
         recentMessage.messageState === MessageState.SENDING;
-        setIsSendButtonDisabled(shouldDisableButton);
+      setIsSendButtonDisabled(shouldDisableButton);
 
       if (
         recentMessage?.templateType &&
@@ -87,9 +87,8 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
   }, [recentMessage, templateNavigationHandler]);
 
   useEffect(() => {
-    setFailed(prev => prev + 1);
+    setFailed((prev) => prev + 1);
   }, [failedMessage]);
-  
 
   const keyExtractor = useCallback(
     (item: any) => item?.reqId || item?.messageId || "",
@@ -98,8 +97,13 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
 
   // Optimized render item function
   const renderItem = useCallback(
-    ({ item, index }: { item: any, index: number }) => (
-      <ListItem item={item} onPress={handleItemPress} index={index} isLastItem={index === 0} />
+    ({ item, index }: { item: any; index: number }) => (
+      <ListItem
+        item={item}
+        onPress={handleItemPress}
+        index={index}
+        isLastItem={index === 0}
+      />
     ),
     []
   );
@@ -136,7 +140,6 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
         boardId: recentMessage?.boardId,
       };
 
-
       if (
         selectedAgent &&
         selectedAgent !== null &&
@@ -150,27 +153,23 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
           icon: selectedAgent?.icon,
           isAgent: true,
         };
-  
+
         let context = {
           sources: [source],
-        
         };
-  
+
         messagePayload.context = context;
-      
       }
-
-
 
       sendMessage(messagePayload);
     },
-    [recentMessage, sendMessage,selectedAgent]
+    [recentMessage, sendMessage, selectedAgent]
   );
 
   return (
     <View style={BotChatStyles.container}>
       <ListHeader />
-     
+
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -188,10 +187,12 @@ const BotChat: React.FC<BotChatProps> = ({ navigation }) => {
         style={BotChatStyles.flatList}
         inverted
       />
-      <SourcesHorizontal session={recentMessage?.context}/>
+      <SourcesHorizontal />
       <Composebar
         onSend={handleSendMessage}
-        sendButtonDisabled={messages?.[0]?.messageState === MessageState.SENDING}
+        sendButtonDisabled={
+          messages?.[0]?.messageState === MessageState.SENDING
+        }
       />
     </View>
   );

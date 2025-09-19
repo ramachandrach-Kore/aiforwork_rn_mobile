@@ -14,3 +14,4 @@ export { ZendeskIcon } from './SourcesIcon';
 export { OutlookIcon } from './SourcesIcon';
 export { TeamsIcon } from './SourcesIcon';
 export { FolderIcon } from './SourcesIcon';
+export { PlusIcon } from './SourcesIcon';

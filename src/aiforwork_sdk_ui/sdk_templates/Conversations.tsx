@@ -165,9 +165,11 @@ const Conversations: React.FC<ConversationsProps> = (props) => {
       };
 
       payload.context = context;
+    
+    }
+    if(props.boardId){
       payload.boardId = props.boardId;
     }
-
     sendMessage(payload);
 
     

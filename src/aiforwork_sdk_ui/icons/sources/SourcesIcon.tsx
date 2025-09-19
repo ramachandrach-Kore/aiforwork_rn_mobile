@@ -665,3 +665,21 @@ export const FolderIcon: React.FC<IconProps> = ({
     </Svg>
   );
 };
+
+export const PlusIcon: React.FC<IconProps> = ({ 
+  width = normalize(20), 
+  height = normalize(20), 
+  color = '#155EEF' 
+}) => {
+  return (
+    <Svg width={width} height={height} viewBox="0 0 20 20" fill="none">
+      <Path 
+        d="M9.99996 4.16667V15.8333M4.16663 10H15.8333" 
+        stroke={color} 
+        strokeWidth="1.66667" 
+        strokeLinecap="round" 
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+};
