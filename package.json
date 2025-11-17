@@ -1,12 +1,64 @@
 {
-  "name": "aiforwork_rn_core",
+  "name": "aiforwork-sdk-core",
   "version": "0.0.1",
-  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./store/messagesStore": {
+      "import": "./dist/store/messagesStore.mjs",
+      "require": "./dist/store/messagesStore.js",
+      "types": "./dist/store/messagesStore.d.ts"
+    },
+    "./store/agentsStore": {
+      "import": "./dist/store/agentsStore.mjs",
+      "require": "./dist/store/agentsStore.js",
+      "types": "./dist/store/agentsStore.d.ts"
+    },
+    "./store/threadsStore": {
+      "import": "./dist/store/threadsStore.mjs",
+      "require": "./dist/store/threadsStore.js",
+      "types": "./dist/store/threadsStore.d.ts"
+    },
+    "./socket": {
+      "import": "./dist/socket/socket.mjs",
+      "require": "./dist/socket/socket.js",
+      "types": "./dist/socket/socket.d.ts"
+    },
+    "./api": {
+      "import": "./dist/api/api.mjs",
+      "require": "./dist/api/api.js",
+      "types": "./dist/api/api.d.ts"
+    },
+    "./config": {
+      "import": "./dist/config/config.mjs",
+      "require": "./dist/config/config.js",
+      "types": "./dist/config/config.d.ts"
+    },
+    "./utils": {
+      "import": "./dist/utils/utils.mjs",
+      "require": "./dist/utils/utils.js",
+      "types": "./dist/utils/utils.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "lint": "eslint .",
-    "start": "react-native start"
+    "start": "react-native start",
+    "clean": "react-native clean",
+    "test": "jest",
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@react-navigation/elements": "^2.6.4",
@@ -49,6 +101,7 @@
     "prettier": "2.8.8",
     "react-native-svg-transformer": "^1.5.1",
     "react-test-renderer": "19.0.0",
+    "tsup": "^7.2.0",
     "typescript": "5.0.4"
   },
   "engines": {

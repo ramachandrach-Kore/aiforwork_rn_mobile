@@ -11,7 +11,6 @@ import {
 import { initializeSDK } from './src/aiforwork_sdk_core/sdk.config';
 import socketService from './src/aiforwork_sdk_core/socket/socket.service';
 import { useThreadsStore } from './src/aiforwork_sdk_core/store/threadsStore';
-import BotChat from './src/aiforwork_sdk_ui/sdk_main/BotChat';
 
 
 // Simple component for fetching threads
@@ -93,10 +92,10 @@ class App extends React.Component<AppProps, AppState> {
   componentDidMount() {
     // Initialize SDK with your configuration
     initializeSDK({
-      accessToken: '5W6Qh-kTfIGUOzhaw6FacUw8Fjkx4boy9gkLQliS9XRUw3PJYh_rapSmdgzL39_C',
+      accessToken: 'sxUMd-up4tqhe4eMYse1DUG_feCOuVwSpfFxLTpZ4Qs_T90QMdynvdGd679AqL9d',
       apiUrl: 'https://work-qa.kore.ai/',
       presenceUrl: 'https://work-qa.kore.ai/',
-      userId: 'u-0f5bdefb-ae94-5d4b-a63a-fe9bc9755bb2'
+      userId: 'u-62c57d2f-0457-5594-94d4-dc711b816dd1'
     });
 
     this.setupSocketListeners();
@@ -249,7 +248,7 @@ class App extends React.Component<AppProps, AppState> {
       <SafeAreaView style={styles.container}>
       
         <StatusBar barStyle="default" />
-        <BotChat navigation={this.props.navigation}/>
+        {this.renderButtons()}
       </SafeAreaView>
     );
   }
