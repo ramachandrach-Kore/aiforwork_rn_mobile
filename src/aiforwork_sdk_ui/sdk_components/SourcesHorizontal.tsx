@@ -13,9 +13,8 @@ import { renderSourceIcons } from "../utils/SourcesUtils";
 // import { FlatList } from "react-native-gesture-handler";
 import { Loader } from "./Loader";
 import { Colors } from "../utils/Colors";
-import { isAndroid } from "../utils/CommonFunctions";
 import EvaImageView from "./EvaImageView";
-import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
+import { useAgentsStore } from "aiforwork-sdk-core";
 import { ChevronDown, CloseIcon } from "../icons";
 
 interface SessionData {

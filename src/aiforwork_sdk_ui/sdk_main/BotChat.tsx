@@ -2,11 +2,11 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { View, Text, FlatList } from "react-native";
 import ListItem from "./ListItem";
 import Composebar from "../sdk_composebar/Composebar";
-import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
+import { useMessagesStore } from "aiforwork-sdk-core";
 import { BotChatStyles } from "./styles";
-import { MessageState } from "../../aiforwork_sdk_core/utils/MessageStates";
+import { MessageState } from "aiforwork-sdk-core";
 import { TemplateNavigationHandler } from "./TemplateNavigationHandler";
-import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
+import { useAgentsStore } from "aiforwork-sdk-core";
 import SourcesHorizontal from "../sdk_components/SourcesHorizontal";
 // import SourcesHorizontal from "../sdk_components/SourcesHorizontal";
 

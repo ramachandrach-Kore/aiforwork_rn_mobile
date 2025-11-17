@@ -14,8 +14,8 @@ import {
 import { normalize, isAndroid } from "../utils/CommonFunctions";
 import { CheckMark, LightBulb } from "../icons";
 import { QueriesIcon } from "../icons/SdkIcons";
-import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
-import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
+import { useMessagesStore } from "aiforwork-sdk-core";
+import { useAgentsStore } from "aiforwork-sdk-core";
 
 const { height: screenHeight } = Dimensions.get("window");
 

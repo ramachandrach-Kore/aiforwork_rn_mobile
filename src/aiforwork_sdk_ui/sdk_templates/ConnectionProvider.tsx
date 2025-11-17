@@ -19,10 +19,10 @@ import API_URL from "../env.constants";
 //import * as UsersDao from "../../../lib/dao/UsersDao";
 import { PlusIcon } from "../icons/sources";
 import EvaImageView from "../sdk_components/EvaImageView";
-import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
+import { useAgentsStore } from "aiforwork-sdk-core";
 import { useCallback, useEffect, useState } from "react";
 import AddConnection from "../sdk_components/AddConnection";
-import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
+import { useMessagesStore } from "aiforwork-sdk-core";
 const ConnectionProvider = (props: any) => {
   const {
     apiAgentsConnectionsData,

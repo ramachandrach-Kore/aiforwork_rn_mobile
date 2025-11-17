@@ -11,7 +11,7 @@ import {
 import { normalize } from "../utils/CommonFunctions";
 import { CloseIcon } from "../icons";
 import EvaImageView from "../sdk_components/EvaImageView";
-import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
+import { useMessagesStore } from "aiforwork-sdk-core";
 
 interface IntentAmbiguityProps {
   data?: any;

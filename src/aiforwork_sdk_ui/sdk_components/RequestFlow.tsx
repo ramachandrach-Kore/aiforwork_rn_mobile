@@ -4,7 +4,7 @@ import { RightArrow } from "../icons";
 import { normalize } from "../utils/CommonFunctions";
 import EvaImageView from "./EvaImageView";
 import { isAndroid } from "../utils/CommonFunctions";
-import { MessageState } from "../../aiforwork_sdk_core/utils/MessageStates";
+import { MessageState } from "aiforwork-sdk-core";
 
 // Type for EvaImageView props
 interface EvaImageViewProps {

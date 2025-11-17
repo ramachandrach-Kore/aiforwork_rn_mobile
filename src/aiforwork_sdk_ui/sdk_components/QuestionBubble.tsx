@@ -1,5 +1,5 @@
 import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
-import { getMessageStateText } from "../../aiforwork_sdk_core/utils/MessageStates";
+import { getMessageStateText } from "aiforwork-sdk-core";
 import { useState } from "react";
 interface QuestionItemProps {
   item: any;

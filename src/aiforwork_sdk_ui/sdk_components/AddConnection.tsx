@@ -8,7 +8,7 @@ import { Loader } from "./Loader";
 import { isIOS } from "../utils/CommonFunctions";
 import { Colors } from "../utils/Colors";
 import KoraToastMessage from "./KoraToastMessage";
-import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
+import { useAgentsStore } from "aiforwork-sdk-core";
 
 interface AddConnectionProps {
   loadUrl: string;

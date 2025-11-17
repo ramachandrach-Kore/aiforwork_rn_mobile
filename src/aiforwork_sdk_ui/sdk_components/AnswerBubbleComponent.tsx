@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import MarkDownComponent from "./MarkDownComponent";
 import CitationSourcesComponent from "./CitationSourcesComponent";
-import { hasMarkdown, isAndroid } from "../../aiforwork_sdk_core/utils/utils";
+import { hasMarkdown, isAndroid } from "aiforwork-sdk-core";
 import { markdownStyles } from "./MarkDownStyles";
 const AnswerBubbleComponent = ({ item }: any) => {
   if (item?.citationAnswers?.length > 0) {

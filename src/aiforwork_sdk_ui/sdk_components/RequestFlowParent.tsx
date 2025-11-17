@@ -1,11 +1,8 @@
 import React, { useCallback, useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { RightArrow } from "../icons";
+import { StyleSheet } from "react-native";
 import { normalize } from "../utils/CommonFunctions";
-import EvaImageView from "./EvaImageView";
 import { isAndroid } from "../utils/CommonFunctions";
 import RequestFlowSheet from "./RequestFlowSheet";
-import { MessageState } from "../../aiforwork_sdk_core/utils/MessageStates";
 import RequestFlow from "./RequestFlow";
 
 // Type for EvaImageView props

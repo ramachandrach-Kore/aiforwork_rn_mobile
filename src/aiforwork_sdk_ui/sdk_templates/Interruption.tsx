@@ -16,10 +16,6 @@ import { normalize } from "../utils/CommonFunctions";
 
 import BottomSheet from "../sdk_components/BottomSheet";
 import { Colors } from "../utils/Colors";
-
-import { isAndroid, isIOS } from "../utils/CommonFunctions";
-
-import WAKeyboardAvoidingView from "../sdk_components/Keyboard/WAKeyboardAvoidingView";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import CalendarPicker from "react-native-calendar-picker";
 import { getTimeline } from "../utils/CommonFunctions";
@@ -28,7 +24,7 @@ import { getTimeline } from "../utils/CommonFunctions";
 import { People } from "../sdk_components/People";
 //import { getAssigneeList } from "../../../actions/jira.action";
 import Avatar from "../sdk_components/avatars/Avatar";
-import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
+import { useMessagesStore } from "aiforwork-sdk-core";
 
 //import { ROUTE_NAMES } from "../../../stacks/RouteNames";
 

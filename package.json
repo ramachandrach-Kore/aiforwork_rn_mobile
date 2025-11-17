@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-navigation/elements": "^2.6.4",
+    "aiforwork-sdk-core": "^0.0.1",
     "axios": "^1.9.0",
     "eventemitter3": "^5.0.1",
     "immer": "^10.1.1",

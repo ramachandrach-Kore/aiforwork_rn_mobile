@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import ResolveAmbiguityModal from "./ResolveAmbiguityModal";
 import { Text, View } from "react-native";
-import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
+import { useMessagesStore } from "aiforwork-sdk-core";
 interface ResolveAmbiguityParentProps {
   data: any;
   onClose: () => void;

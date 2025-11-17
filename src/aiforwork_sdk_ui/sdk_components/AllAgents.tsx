@@ -18,8 +18,8 @@ import { CheckMark, CloseIcon, NoResultSearch, SearchIcon } from "../icons";
 
 import EvaImageView from "./EvaImageView";
 import { AgenticAppEmptyState } from "../icons/SdkIcons";
-import { useMessagesStore } from "../../aiforwork_sdk_core/store/messagesStore";
-import { useAgentsStore } from "../../aiforwork_sdk_core/store/agentsStore";
+import { useMessagesStore } from "aiforwork-sdk-core";
+import { useAgentsStore } from "aiforwork-sdk-core";
 
 // Type declaration for EvaImageView to fix TypeScript issues
 declare module "./EvaImageView" {
